@@ -132,6 +132,14 @@ window.WeeklyTest = function WeeklyTest({
   const StrokeWriter = window.HanziStrokeWriter;
   function useItem(key) {
     if (!items[key] || items[key] <= 0) return U.toast("ไอเทมหมด", "warn");
+    const itemInfo = itemsCatalog[key] || {
+      emoji: "🎒",
+      name: key
+    };
+    const updatedItems = {
+      ...items,
+      [key]: items[key] - 1
+    };
     if (key === "fifty") {
       const wrongs = q.choices.filter(c => c.id !== q.correct);
       const toHide = U.sample(wrongs, 2).map(c => c.id);
@@ -143,7 +151,6 @@ window.WeeklyTest = function WeeklyTest({
     if (key === "double") setDoubleArmed(true);
     if (key === "ice") {
       setPaused(true);
-      U.toast("⏸ หยุดเวลา 10 วินาที", "info");
       setTimeout(() => {
         setPaused(false);
       }, 10000);
@@ -164,16 +171,11 @@ window.WeeklyTest = function WeeklyTest({
       setHidden([]);
       setShowPinyin(false);
     }
-    setItems(p => ({
-      ...p,
-      [key]: p[key] - 1
-    }));
+    setItems(updatedItems);
     AuthService.updateUser(user.studentId, {
-      items: {
-        ...items,
-        [key]: items[key] - 1
-      }
+      items: updatedItems
     });
+    U.toast(`ใช้ ${itemInfo.emoji} ${itemInfo.name} แล้ว เหลือ ${updatedItems[key]} ชิ้น`, "info");
     U.sfxClick();
   }
   function handleAnswer(choiceId, meta = {}) {
