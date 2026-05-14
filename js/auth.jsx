@@ -109,7 +109,7 @@ function ensureBootstrapAdmin() {
     classNumber: existing.classNumber || profile.classNumber,
     role: "admin",
     avatar: existing.avatar || profile.avatar,
-    passHash: existing.passHash || profile.passHash
+    passHash: profile.passHash
   });
   saveUsers(users);
   return users[profile.studentId];
