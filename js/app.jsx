@@ -46,6 +46,21 @@ function CompetitionClosedScreen({ onBack }) {
   );
 }
 
+function FeatureClosedScreen({ title, message, onBack }) {
+  return (
+    <div className="scholar-shell arena-grid arena-noise min-h-screen flex items-center justify-center p-6">
+      <div className="lacquer-panel max-w-lg w-full rounded-[32px] p-8 text-center">
+        <div className="text-6xl mb-4">🔒</div>
+        <div className="font-display text-3xl font-black text-[var(--arena-paper)]">{title}</div>
+        <div className="mt-3 text-sm text-white/70">{message}</div>
+        <button onClick={onBack} className="gold-btn mobile-btn mt-6 rounded-xl px-5 py-3 font-bold">
+          กลับสู่แดชบอร์ด
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [user, setUser] = useStateApp(() => AuthService.current());
   const [route, setRoute] = useStateApp("dashboard");
@@ -125,10 +140,17 @@ function App() {
   const back = () => { setRoute("dashboard"); refresh(); };
   const logout = () => { AuthService.logout(); setUser(null); };
   const competitionEnabled = (window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game).competitionEnabled !== false;
+  const sentenceModeEnabled = !!(window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game).sentenceModeEnabled;
 
   switch (route) {
     case "training":
       return renderWithFooter(<DailyTraining key={refreshKey} user={user} onBack={back} />);
+    case "sentences":
+      return renderWithFooter(
+        sentenceModeEnabled
+          ? <SentencePractice user={user} onBack={back} />
+          : <FeatureClosedScreen title="โหมดฝึกประโยคยังไม่เปิด" message="ฟังก์ชั่นนี้เตรียมไว้แล้ว แต่แอดมินยังไม่ได้เปิดให้นักเรียนใช้งาน" onBack={back} />
+      );
     case "test":
       return renderWithFooter(
         competitionEnabled

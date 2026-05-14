@@ -98,6 +98,7 @@ function TestBattleChart({ tests, maxScore }) {
 window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
   const game = window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game;
   const competitionEnabled = game.competitionEnabled !== false;
+  const sentenceModeEnabled = !!game.sentenceModeEnabled;
   const [tick, setTick] = useStateD(0);
   const [openGuide, setOpenGuide] = useStateD(false);
   const [seasonStats, setSeasonStats] = useStateD(() => Progress.getStudentSeasonStats(user.studentId, user.classroom));
@@ -150,6 +151,14 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
       onClick: () => competitionEnabled && isTestDay && !tookThisWeek && onNav("test"),
       disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady,
       attention: competitionEnabled && isTestDay && !tookThisWeek && testCycle.isReady
+    },
+    {
+      key:"sentences", title:"ฝึกประโยค", emoji:"💬",
+      desc: sentenceModeEnabled ? "ฟัง พูด อ่าน จากคำศัพท์ที่เรียน" : "รอแอดมินเปิดใช้งาน",
+      color: sentenceModeEnabled ? "from-sky-500 via-indigo-500 to-violet-600" : "from-slate-500 to-slate-700",
+      onClick: () => sentenceModeEnabled && onNav("sentences"),
+      disabled: !sentenceModeEnabled,
+      badge: sentenceModeEnabled ? "โหมดใหม่" : "ยังไม่เปิด"
     },
     {
       key:"board", title:"อันดับห้อง", emoji:"🏆",

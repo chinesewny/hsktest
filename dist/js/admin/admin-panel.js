@@ -99,6 +99,11 @@ const SETTINGS_FIELDS = [{
   type: "boolean",
   description: "เปิด/ปิดการเข้าสอบประจำสัปดาห์และกระดานผู้นำ"
 }, {
+  key: "sentenceModeEnabled",
+  label: "เปิดฟังก์ชั่นประโยค",
+  type: "boolean",
+  description: "เปิด/ปิดเมนูฝึกและทดสอบประโยคสำหรับนักเรียน"
+}, {
   key: "wordsPerDay",
   label: "คำศัพท์ต่อวัน",
   type: "number",
@@ -771,6 +776,7 @@ function AdminSettings() {
     }
   };
   const competitionEnabled = !!settings.game.competitionEnabled;
+  const sentenceModeEnabled = !!settings.game.sentenceModeEnabled;
   return /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
   }, /*#__PURE__*/React.createElement("div", {
@@ -820,6 +826,34 @@ function AdminSettings() {
   }, "\u0E1B\u0E34\u0E14\u0E23\u0E30\u0E1A\u0E1A\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19"), /*#__PURE__*/React.createElement("div", {
     className: `mt-1 text-xs ${!competitionEnabled ? "text-rose-600" : "text-white/70"}`
   }, "\u0E25\u0E47\u0E2D\u0E01\u0E01\u0E32\u0E23\u0E2A\u0E2D\u0E1A\u0E41\u0E25\u0E30\u0E01\u0E23\u0E30\u0E14\u0E32\u0E19\u0E1C\u0E39\u0E49\u0E19\u0E33\u0E0A\u0E31\u0E48\u0E27\u0E04\u0E23\u0E32\u0E27"))))), /*#__PURE__*/React.createElement("div", {
+    className: `rounded-3xl border p-5 text-white shadow-xl ${sentenceModeEnabled ? "border-sky-300/40 bg-gradient-to-br from-sky-600 to-indigo-700" : "border-slate-300/40 bg-gradient-to-br from-slate-700 to-slate-900"}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs uppercase tracking-[0.28em] text-white/75"
+  }, "Sentence Practice Control"), /*#__PURE__*/React.createElement("h3", {
+    className: "mt-2 text-2xl font-black"
+  }, sentenceModeEnabled ? "โหมดฝึกประโยคเปิดอยู่" : "โหมดฝึกประโยคยังปิดอยู่"), /*#__PURE__*/React.createElement("div", {
+    className: "mt-2 max-w-2xl text-sm text-white/85"
+  }, sentenceModeEnabled ? "นักเรียนจะเห็นเมนูฝึกประโยค พร้อมแบบฝึกฟัง พูด อ่าน และการทดสอบประโยค" : "ระบบเตรียมฟังก์ชั่นไว้แล้ว แต่จะยังไม่แสดงให้นักเรียนทั่วไปจนกว่าแอดมินเปิด")), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-3 sm:flex-row"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => patchGame("sentenceModeEnabled", true),
+    className: `rounded-2xl px-5 py-4 text-left font-bold transition ${sentenceModeEnabled ? "bg-white text-sky-700 shadow-lg" : "bg-white/12 text-white hover:bg-white/20"}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-lg"
+  }, "\u0E40\u0E1B\u0E34\u0E14\u0E42\u0E2B\u0E21\u0E14\u0E1B\u0E23\u0E30\u0E42\u0E22\u0E04"), /*#__PURE__*/React.createElement("div", {
+    className: `mt-1 text-xs ${sentenceModeEnabled ? "text-sky-600" : "text-white/70"}`
+  }, "\u0E43\u0E2B\u0E49\u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19\u0E1D\u0E36\u0E01\u0E41\u0E25\u0E30\u0E17\u0E14\u0E2A\u0E2D\u0E1A\u0E1B\u0E23\u0E30\u0E42\u0E22\u0E04\u0E44\u0E14\u0E49")), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => patchGame("sentenceModeEnabled", false),
+    className: `rounded-2xl px-5 py-4 text-left font-bold transition ${!sentenceModeEnabled ? "bg-white text-slate-800 shadow-lg" : "bg-white/12 text-white hover:bg-white/20"}`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-lg"
+  }, "\u0E1B\u0E34\u0E14\u0E42\u0E2B\u0E21\u0E14\u0E1B\u0E23\u0E30\u0E42\u0E22\u0E04"), /*#__PURE__*/React.createElement("div", {
+    className: `mt-1 text-xs ${!sentenceModeEnabled ? "text-slate-600" : "text-white/70"}`
+  }, "\u0E0B\u0E48\u0E2D\u0E19\u0E40\u0E21\u0E19\u0E39\u0E08\u0E32\u0E01\u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19\u0E0A\u0E31\u0E48\u0E27\u0E04\u0E23\u0E32\u0E27"))))), /*#__PURE__*/React.createElement("div", {
     className: "bg-white border rounded-2xl p-4"
   }, /*#__PURE__*/React.createElement("h3", {
     className: "font-bold mb-3"

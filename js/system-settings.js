@@ -9,6 +9,7 @@
   const DEFAULTS = {
     game: {
       ...window.APP_CONFIG.game,
+      sentenceModeEnabled: false,
       trainingCompleteCoins: Number(window.APP_CONFIG.game.trainingCompleteCoins || 10)
     },
     rewards: [

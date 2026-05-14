@@ -70,6 +70,7 @@ function getShopCatalog() {
 
 const SETTINGS_FIELDS = [
   { key: "competitionEnabled", label: "เปิดระบบการแข่งขัน", type: "boolean", description: "เปิด/ปิดการเข้าสอบประจำสัปดาห์และกระดานผู้นำ" },
+  { key: "sentenceModeEnabled", label: "เปิดฟังก์ชั่นประโยค", type: "boolean", description: "เปิด/ปิดเมนูฝึกและทดสอบประโยคสำหรับนักเรียน" },
   { key: "wordsPerDay", label: "คำศัพท์ต่อวัน", type: "number", min: 1 },
   { key: "daysPerWeek", label: "วันฝึกต่อสัปดาห์", type: "number", min: 1, max: 7 },
   { key: "questionsPerTest", label: "จำนวนข้อสอบ", type: "number", min: 1 },
@@ -542,6 +543,7 @@ function AdminSettings() {
   };
 
   const competitionEnabled = !!settings.game.competitionEnabled;
+  const sentenceModeEnabled = !!settings.game.sentenceModeEnabled;
 
   return (
     <div className="space-y-4">
@@ -587,6 +589,38 @@ function AdminSettings() {
             >
               <div className="text-lg">ปิดระบบการแข่งขัน</div>
               <div className={`mt-1 text-xs ${!competitionEnabled ? "text-rose-600" : "text-white/70"}`}>ล็อกการสอบและกระดานผู้นำชั่วคราว</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`rounded-3xl border p-5 text-white shadow-xl ${sentenceModeEnabled ? "border-sky-300/40 bg-gradient-to-br from-sky-600 to-indigo-700" : "border-slate-300/40 bg-gradient-to-br from-slate-700 to-slate-900"}`}>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-[0.28em] text-white/75">Sentence Practice Control</div>
+            <h3 className="mt-2 text-2xl font-black">{sentenceModeEnabled ? "โหมดฝึกประโยคเปิดอยู่" : "โหมดฝึกประโยคยังปิดอยู่"}</h3>
+            <div className="mt-2 max-w-2xl text-sm text-white/85">
+              {sentenceModeEnabled
+                ? "นักเรียนจะเห็นเมนูฝึกประโยค พร้อมแบบฝึกฟัง พูด อ่าน และการทดสอบประโยค"
+                : "ระบบเตรียมฟังก์ชั่นไว้แล้ว แต่จะยังไม่แสดงให้นักเรียนทั่วไปจนกว่าแอดมินเปิด"}
+            </div>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => patchGame("sentenceModeEnabled", true)}
+              className={`rounded-2xl px-5 py-4 text-left font-bold transition ${sentenceModeEnabled ? "bg-white text-sky-700 shadow-lg" : "bg-white/12 text-white hover:bg-white/20"}`}
+            >
+              <div className="text-lg">เปิดโหมดประโยค</div>
+              <div className={`mt-1 text-xs ${sentenceModeEnabled ? "text-sky-600" : "text-white/70"}`}>ให้นักเรียนฝึกและทดสอบประโยคได้</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => patchGame("sentenceModeEnabled", false)}
+              className={`rounded-2xl px-5 py-4 text-left font-bold transition ${!sentenceModeEnabled ? "bg-white text-slate-800 shadow-lg" : "bg-white/12 text-white hover:bg-white/20"}`}
+            >
+              <div className="text-lg">ปิดโหมดประโยค</div>
+              <div className={`mt-1 text-xs ${!sentenceModeEnabled ? "text-slate-600" : "text-white/70"}`}>ซ่อนเมนูจากนักเรียนชั่วคราว</div>
             </button>
           </div>
         </div>

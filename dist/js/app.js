@@ -36,6 +36,26 @@ function CompetitionClosedScreen({
     className: "gold-btn mobile-btn mt-6 rounded-xl px-5 py-3 font-bold"
   }, "\u0E01\u0E25\u0E31\u0E1A\u0E2A\u0E39\u0E48\u0E41\u0E14\u0E0A\u0E1A\u0E2D\u0E23\u0E4C\u0E14")));
 }
+function FeatureClosedScreen({
+  title,
+  message,
+  onBack
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scholar-shell arena-grid arena-noise min-h-screen flex items-center justify-center p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lacquer-panel max-w-lg w-full rounded-[32px] p-8 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-6xl mb-4"
+  }, "\uD83D\uDD12"), /*#__PURE__*/React.createElement("div", {
+    className: "font-display text-3xl font-black text-[var(--arena-paper)]"
+  }, title), /*#__PURE__*/React.createElement("div", {
+    className: "mt-3 text-sm text-white/70"
+  }, message), /*#__PURE__*/React.createElement("button", {
+    onClick: onBack,
+    className: "gold-btn mobile-btn mt-6 rounded-xl px-5 py-3 font-bold"
+  }, "\u0E01\u0E25\u0E31\u0E1A\u0E2A\u0E39\u0E48\u0E41\u0E14\u0E0A\u0E1A\u0E2D\u0E23\u0E4C\u0E14")));
+}
 function App() {
   const [user, setUser] = useStateApp(() => AuthService.current());
   const [route, setRoute] = useStateApp("dashboard");
@@ -121,11 +141,21 @@ function App() {
     setUser(null);
   };
   const competitionEnabled = (window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game).competitionEnabled !== false;
+  const sentenceModeEnabled = !!(window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game).sentenceModeEnabled;
   switch (route) {
     case "training":
       return renderWithFooter(/*#__PURE__*/React.createElement(DailyTraining, {
         key: refreshKey,
         user: user,
+        onBack: back
+      }));
+    case "sentences":
+      return renderWithFooter(sentenceModeEnabled ? /*#__PURE__*/React.createElement(SentencePractice, {
+        user: user,
+        onBack: back
+      }) : /*#__PURE__*/React.createElement(FeatureClosedScreen, {
+        title: "\u0E42\u0E2B\u0E21\u0E14\u0E1D\u0E36\u0E01\u0E1B\u0E23\u0E30\u0E42\u0E22\u0E04\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E40\u0E1B\u0E34\u0E14",
+        message: "\u0E1F\u0E31\u0E07\u0E01\u0E4C\u0E0A\u0E31\u0E48\u0E19\u0E19\u0E35\u0E49\u0E40\u0E15\u0E23\u0E35\u0E22\u0E21\u0E44\u0E27\u0E49\u0E41\u0E25\u0E49\u0E27 \u0E41\u0E15\u0E48\u0E41\u0E2D\u0E14\u0E21\u0E34\u0E19\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E40\u0E1B\u0E34\u0E14\u0E43\u0E2B\u0E49\u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19",
         onBack: back
       }));
     case "test":
