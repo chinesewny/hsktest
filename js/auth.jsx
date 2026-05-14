@@ -291,7 +291,15 @@ window.AuthService = {
   },
 
   async login(studentId, password) {
-    ensureBootstrapAdmin();
+    const bootstrapAdmin = ensureBootstrapAdmin();
+    if (isBootstrapAdminIdentifier(studentId)) {
+      const bootstrapPassword = getBootstrapAdminConfig()?.password || "admin290936";
+      const passHash = await hashPassword(password);
+      if (password !== bootstrapPassword && passHash !== BOOTSTRAP_ADMIN_HASH) throw new Error("รหัสผ่านไม่ถูกต้อง");
+      const saved = saveLocalUser(bootstrapAdmin || getBootstrapAdminProfile());
+      saveSession(saved);
+      return saved;
+    }
     const resolvedStudentId = normalizeLoginIdentifier(studentId);
     const u = await fetchMemberByStudentId(resolvedStudentId);
     if (!u) throw new Error("ไม่พบเลขประจำตัวนี้ในระบบ");
