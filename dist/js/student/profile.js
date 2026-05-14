@@ -48,6 +48,7 @@ window.Profile = function Profile({
   const game = window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game;
   const [oldPw, setOldPw] = useStateP("");
   const [newPw, setNewPw] = useStateP("");
+  const [section, setSection] = useStateP("stats");
   const lvl = U.calcLevel(user.xp || 0);
   const shopMap = (window.SystemSettings?.getShopItems ? window.SystemSettings.getShopItems() : []).reduce((map, item) => {
     map[item.key] = item;
@@ -102,31 +103,42 @@ window.Profile = function Profile({
   }, "\u0E23\u0E2B\u0E31\u0E2A ", user.studentId, " \u2022 ", user.classroom, " \u2022 \u0E40\u0E25\u0E02\u0E17\u0E35\u0E48 ", user.classNumber || "-"), /*#__PURE__*/React.createElement("div", {
     className: "mt-3 inline-block bg-white/20 px-4 py-1 rounded-full font-bold"
   }, "Lv.", lvl.level, " \u2022 ", lvl.currentXp, "/", lvl.nextXp, " XP")), /*#__PURE__*/React.createElement("div", {
+    className: "mb-4 grid grid-cols-3 gap-2 rounded-2xl border border-white/70 bg-white/70 p-2 backdrop-blur"
+  }, [["stats", "สถิติ", "fa-chart-simple"], ["bag", "กระเป๋า", "fa-bag-shopping"], ["security", "รหัสผ่าน", "fa-key"]].map(([key, label, icon]) => /*#__PURE__*/React.createElement("button", {
+    key: key,
+    type: "button",
+    onClick: () => setSection(key),
+    className: `rounded-xl px-3 py-3 text-sm font-bold transition ${section === key ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-600 hover:bg-blue-50"}`
+  }, /*#__PURE__*/React.createElement("i", {
+    className: `fa-solid ${icon} mr-2`
+  }), label))), section === "stats" && /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"
   }, [["🪙", user.coins || 0, "เหรียญ"], ["🔥", user.streak || 0, "วันต่อเนื่อง"], ["📚", trainedDays, "วันที่ฝึก"], ["⚔️", tests.length, "สอบทั้งหมด"], ["⭐", totalScore, "คะแนนรวม"], ["🎯", avgAccuracy + "%", "ความแม่นยำ"], ["🏆", bestScore, "คะแนนสูงสุด"], ["🎁", Progress.myRewards(user.studentId).length, "รางวัลที่ได้"]].map((s, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
-    className: "bg-[rgba(255,255,255,.82)] backdrop-blur rounded-xl p-3 text-center border border-[#e7dac7]"
+    className: "bg-[rgba(255,255,255,.86)] backdrop-blur rounded-xl p-3 text-center border border-blue-100"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-2xl"
   }, s[0]), /*#__PURE__*/React.createElement("div", {
     className: "text-xl font-bold"
   }, s[1]), /*#__PURE__*/React.createElement("div", {
-    className: "text-xs text-[#7a665d]"
-  }, s[2])))), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-slate-500"
+  }, s[2])))), section === "bag" && /*#__PURE__*/React.createElement("div", {
     className: "arena-panel rounded-2xl p-4 border border-white/10 mb-4"
   }, /*#__PURE__*/React.createElement("h3", {
-    className: "font-bold mb-2"
-  }, "\uD83C\uDF92 \u0E44\u0E2D\u0E40\u0E17\u0E21\u0E43\u0E19\u0E01\u0E23\u0E30\u0E40\u0E1B\u0E4B\u0E32"), /*#__PURE__*/React.createElement("div", {
+    className: "font-bold mb-3"
+  }, "\u0E44\u0E2D\u0E40\u0E17\u0E21\u0E43\u0E19\u0E01\u0E23\u0E30\u0E40\u0E1B\u0E4B\u0E32"), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap gap-2"
-  }, Object.entries(user.items || {}).map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+  }, Object.entries(user.items || {}).length ? Object.entries(user.items || {}).map(([k, v]) => /*#__PURE__*/React.createElement("div", {
     key: k,
-    className: "bg-[rgba(92,57,46,.08)] px-3 py-2 rounded-lg text-sm"
-  }, shopMap[k]?.emoji || "🎒", " ", shopMap[k]?.name || k, " ", /*#__PURE__*/React.createElement("b", null, v))))), /*#__PURE__*/React.createElement("form", {
+    className: "bg-blue-50 px-3 py-2 rounded-lg text-sm text-slate-700"
+  }, shopMap[k]?.emoji || "🎒", " ", shopMap[k]?.name || k, " ", /*#__PURE__*/React.createElement("b", null, v))) : /*#__PURE__*/React.createElement("div", {
+    className: "rounded-xl border border-dashed border-blue-200 bg-blue-50 p-4 text-sm text-slate-500"
+  }, "\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E21\u0E35\u0E44\u0E2D\u0E40\u0E17\u0E21 \u0E25\u0E2D\u0E07\u0E40\u0E02\u0E49\u0E32\u0E44\u0E1B\u0E17\u0E35\u0E48\u0E23\u0E49\u0E32\u0E19\u0E04\u0E49\u0E32\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E41\u0E25\u0E01\u0E02\u0E2D\u0E07\u0E23\u0E32\u0E07\u0E27\u0E31\u0E25\u0E44\u0E14\u0E49"))), section === "security" && /*#__PURE__*/React.createElement("form", {
     onSubmit: changePw,
     className: "arena-panel rounded-2xl p-4 border border-white/10 space-y-3"
   }, /*#__PURE__*/React.createElement("h3", {
     className: "font-bold"
-  }, "\uD83D\uDD11 \u0E40\u0E1B\u0E25\u0E35\u0E48\u0E22\u0E19\u0E23\u0E2B\u0E31\u0E2A\u0E1C\u0E48\u0E32\u0E19"), /*#__PURE__*/React.createElement(ProfilePasswordInput, {
+  }, "\u0E40\u0E1B\u0E25\u0E35\u0E48\u0E22\u0E19\u0E23\u0E2B\u0E31\u0E2A\u0E1C\u0E48\u0E32\u0E19"), /*#__PURE__*/React.createElement(ProfilePasswordInput, {
     placeholder: "\u0E23\u0E2B\u0E31\u0E2A\u0E1C\u0E48\u0E32\u0E19\u0E40\u0E14\u0E34\u0E21",
     value: oldPw,
     onChange: e => setOldPw(e.target.value)

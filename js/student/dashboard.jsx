@@ -99,6 +99,7 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
   const game = window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game;
   const competitionEnabled = game.competitionEnabled !== false;
   const [tick, setTick] = useStateD(0);
+  const [openGuide, setOpenGuide] = useStateD(false);
   const [seasonStats, setSeasonStats] = useStateD(() => Progress.getStudentSeasonStats(user.studentId, user.classroom));
   const [classBoard, setClassBoard] = useStateD([]);
   useEffectD(() => { const i = setInterval(()=>setTick(t=>t+1), 60000); return () => clearInterval(i); }, []);
@@ -129,45 +130,45 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
 
   const cards = [
     {
-      key:"train", title:"ฝึกฝนวันนี้", emoji:"📚",
+      key:"train", title:"ฝึกวันนี้", emoji:"📚",
       desc: dailyReview.today
         ? `แบบฝึกหลังเรียน ${dailyReview.today.score}/${dailyReview.today.total} (${dailyReview.today.accuracy}%)`
         : (todayWords.length ? `${todayWords.length} คำใหม่รอคุณอยู่` : "วันนี้ไม่มีรอบฝึกใหม่"),
-      color:"from-emerald-500 via-teal-500 to-cyan-500",
+      color:"from-cyan-500 via-sky-500 to-blue-600",
       onClick: () => onNav("training"),
       badge: dailyReview.today
         ? `ทบทวนแล้ว ${dailyReview.today.accuracy}%`
         : (training.trainedToday ? "✓ ฝึกแล้ว" : (todayWords.length ? "ยังไม่ทำ" : "วันพัก"))
     },
     {
-      key:"test", title:competitionEnabled && isTestDay ? "🔥 สอบประจำสัปดาห์!" : "ทดสอบประจำสัปดาห์", emoji:"⚔️",
+      key:"test", title:competitionEnabled && isTestDay ? "สอบวันนี้!" : "สอบรายสัปดาห์", emoji:"⚡",
       desc: !competitionEnabled
         ? "แอดมินยังไม่เปิดระบบการแข่งขัน"
         : (tookThisWeek ? "✓ สอบรอบนี้แล้ว" : (isTestDay ? `สุ่ม ${game.questionsPerTest} ข้อจาก ${testCycle.totalWords} คำ` : "เปิดตามวันที่ตั้งไว้")),
-      color: competitionEnabled && isTestDay && !tookThisWeek ? "from-rose-700 via-red-600 to-amber-500" : "from-stone-500 to-stone-700",
+      color: competitionEnabled && isTestDay && !tookThisWeek ? "from-pink-500 via-rose-500 to-orange-400" : "from-slate-500 to-slate-700",
       onClick: () => competitionEnabled && isTestDay && !tookThisWeek && onNav("test"),
       disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady
     },
     {
-      key:"board", title:"กระดานผู้นำ", emoji:"🏆",
+      key:"board", title:"อันดับห้อง", emoji:"🏆",
       desc: competitionEnabled ? `อันดับชั้น ${user.classroom}` : "จะเปิดเมื่อแอดมินเปิดระบบการแข่งขัน",
-      color: competitionEnabled ? "from-amber-500 via-yellow-400 to-orange-400" : "from-stone-500 to-stone-700",
+      color: competitionEnabled ? "from-amber-400 via-yellow-300 to-lime-400" : "from-slate-500 to-slate-700",
       onClick: () => competitionEnabled && onNav("leaderboard"),
       disabled: !competitionEnabled
     },
     {
-      key:"shop", title:"ร้านค้าไอเทม", emoji:"🛒",
-      desc:`มีเหรียญ ${user.coins||0} 🪙`, color:"from-red-600 via-rose-600 to-orange-500",
+      key:"shop", title:"ร้านไอเทม", emoji:"🛒",
+      desc:`มีเหรียญ ${user.coins||0} 🪙`, color:"from-violet-500 via-fuchsia-500 to-pink-500",
       onClick: () => onNav("shop")
     },
     {
       key:"profile", title:"โปรไฟล์", emoji:"👤",
-      desc:"ดูสถิติและความสำเร็จ", color:"from-slate-700 via-zinc-700 to-stone-700",
+      desc:"สถิติและบัญชี", color:"from-emerald-400 via-teal-500 to-cyan-500",
       onClick: () => onNav("profile")
     },
     {
-      key:"rewards", title:"ของรางวัลของฉัน", emoji:"🎁",
-      desc:`${Progress.myRewards(user.studentId).length} ใบ`, color:"from-amber-600 via-orange-500 to-red-500",
+      key:"rewards", title:"รางวัลของฉัน", emoji:"🎁",
+      desc:`${Progress.myRewards(user.studentId).length} ใบ`, color:"from-orange-400 via-amber-400 to-yellow-300",
       onClick: () => onNav("rewards")
     }
   ];
@@ -182,21 +183,19 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
 
   return (
     <div className="scholar-shell arena-shell arena-grid arena-noise min-h-screen text-[var(--arena-ink)]">
-      <div className="arena-orb bg-emerald-300/20 h-36 w-36 left-[6%] top-[10%]"></div>
-      <div className="arena-orb bg-yellow-300/20 h-52 w-52 right-[8%] top-[22%]" style={{animationDelay:"1.8s"}}></div>
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(44,20,22,.78)] text-white backdrop-blur">
+      <div className="sticky top-0 z-40 border-b border-white/40 bg-white/78 text-[var(--arena-ink)] backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AvatarBadge avatar={user.avatar} className="h-14 w-14" textClassName="text-2xl" />
             <div>
               <div className="font-bold">{user.fullname}</div>
-              <div className="text-xs text-white/60">{user.classroom} • รหัส {user.studentId}</div>
+              <div className="text-xs text-slate-500">{user.classroom} • รหัส {user.studentId}</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-sm text-amber-300 font-bold">🪙 {user.coins||0}</div>
-            <div className="text-sm text-orange-300 font-bold">🔥 {user.streak||0}</div>
+            <div className="rounded-full bg-amber-100 px-3 py-1 text-sm text-amber-700 font-bold">🪙 {user.coins||0}</div>
+            <div className="rounded-full bg-rose-100 px-3 py-1 text-sm text-rose-700 font-bold">🔥 {user.streak||0}</div>
             <button onClick={onLogout} className="cinnabar-btn px-3 py-1.5 rounded-lg text-sm">
               ออก
             </button>
@@ -207,19 +206,19 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
       {/* Hero – XP / Level */}
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="lacquer-panel rounded-[30px] p-6 shadow-2xl border border-white/15 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(78,216,223,.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(241,91,76,.16),transparent_28%),linear-gradient(135deg,rgba(246,198,79,.14),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_40%),linear-gradient(225deg,rgba(255,209,102,.20),transparent_46%)]"></div>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="relative z-10">
-              <div className="font-display text-sm uppercase tracking-[0.28em] text-[var(--arena-gold-soft)]">Scholar Rank</div>
+              <div className="font-display text-sm uppercase text-[var(--arena-gold-soft)]">My Learning Level</div>
               <div className="font-display text-5xl font-black text-[var(--arena-cream)]">Lv.{lvlInfo.level}</div>
-              <div className="text-sm mt-2">XP {lvlInfo.currentXp} / {lvlInfo.nextXp}</div>
+              <div className="text-sm mt-2 text-white/88">XP {lvlInfo.currentXp} / {lvlInfo.nextXp}</div>
               <div className="w-64 h-3 bg-white/20 rounded-full mt-1 overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-yellow-300 to-orange-400 transition-all"
                      style={{width: `${(lvlInfo.currentXp/lvlInfo.nextXp)*100}%`}}></div>
               </div>
             </div>
             <div className="relative z-10 text-right">
-              <div className="font-display text-sm uppercase tracking-[0.28em] text-[var(--arena-jade-soft)]">Season Board</div>
+              <div className="font-display text-sm uppercase text-cyan-100">Season Board</div>
               <div className="text-3xl font-bold">รอบ {season.roundsCompleted}/{game.seasonRounds}</div>
               <div className="text-sm mt-1 opacity-80">
                 {seasonStats.rank ? `อันดับสะสม ${seasonStats.rank} ของ ${user.classroom}` : `รอคะแนนสะสมรอบแรกของ ${user.classroom}`}
@@ -232,6 +231,25 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
           </div>
         </div>
 
+        <div className="mt-4 grid grid-cols-2 lg:grid-cols-6 gap-3">
+          {cards.map(c => (
+            <button key={c.key} onClick={c.onClick} disabled={c.disabled}
+                    className={`relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0`}>
+              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.24),transparent_48%)]"></div>
+              <div className="relative z-10 flex h-full flex-col justify-between">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="text-3xl">{c.emoji}</div>
+                  {c.badge && <span className="max-w-[6rem] rounded-full bg-white/22 px-2 py-1 text-right text-[11px] leading-tight">{c.badge}</span>}
+                </div>
+                <div>
+                  <div className="text-base font-bold leading-tight">{c.title}</div>
+                  <div className="mt-1 text-xs leading-5 text-white/86">{c.desc}</div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
         {/* Student Summary */}
         <div className="mt-4 arena-panel rounded-2xl p-5">
           {!competitionEnabled && (
@@ -241,16 +259,35 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
           )}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
             <div>
-              <div className="text-sm uppercase tracking-[0.28em] text-[var(--arena-jade)]">Adaptive Learning</div>
-              <h3 className="font-bold text-2xl">การสุ่มคำตามระดับการเรียนรู้</h3>
-              <div className="text-xs text-[#75625a] mt-1">
-                ระบบจะปลดล็อก HSK ระดับถัดไปอัตโนมัติเมื่อความแม่นยำของระดับปัจจุบันถึง {Math.round((adaptivePlan.config?.unlockThreshold || 0.7) * 100)}%
-              </div>
+              <div className="text-sm uppercase text-[var(--arena-jade)]">Today Plan</div>
+              <h3 className="font-bold text-2xl">แผนฝึกของฉัน</h3>
             </div>
-                <div className="rounded-full bg-[#f3eadc] px-4 py-2 text-sm text-[#5b433b]">
-              เส้นทางการเรียน HSK {adaptivePlan.baseLevel} • ปลดล็อกแล้ว {adaptivePlan.unlocked.length}/3 ระดับ
+            <button type="button" onClick={() => setOpenGuide(v => !v)} className="ghost-btn rounded-full px-4 py-2 text-sm font-bold">
+              {openGuide ? "ซ่อนรายละเอียด" : "ดูรายละเอียด HSK"}
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="rounded-2xl border border-cyan-100 bg-cyan-50 p-4">
+              <div className="text-sm text-cyan-700">คำวันนี้</div>
+              <div className="text-3xl font-black text-cyan-700">{todayWords.length}</div>
+              <div className="text-xs text-slate-500">คำศัพท์ที่รอฝึก</div>
+            </div>
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+              <div className="text-sm text-emerald-700">ความแม่นยำล่าสุด</div>
+              <div className="text-3xl font-black text-emerald-700">{dailyReview.today ? `${dailyReview.today.accuracy}%` : "--"}</div>
+              <div className="text-xs text-slate-500">จากแบบฝึกหลังเรียน</div>
+            </div>
+            <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
+              <div className="text-sm text-amber-700">ระดับที่เปิดแล้ว</div>
+              <div className="text-3xl font-black text-amber-700">{adaptivePlan.unlocked.length}/3</div>
+              <div className="text-xs text-slate-500">เริ่มจาก HSK {adaptivePlan.baseLevel}</div>
             </div>
           </div>
+          {openGuide && (
+            <div className="mt-4">
+              <div className="mb-3 rounded-full bg-[#edf6ff] px-4 py-2 text-sm text-[#2d4764] inline-flex">
+              เส้นทางการเรียน HSK {adaptivePlan.baseLevel} • ปลดล็อกแล้ว {adaptivePlan.unlocked.length}/3 ระดับ
+              </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
             {[1, 2, 3].map(lvl => {
               const isUnlocked = adaptivePlan.unlocked.includes(lvl);
@@ -308,19 +345,21 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
               💡 ทำแบบฝึกหลังเรียนต่อเนื่อง — เมื่อความแม่นยำสูงพอ ระบบจะค่อย ๆ เริ่มแจกคำของระดับถัดไปให้ฝึกควบคู่
             </div>
           )}
+            </div>
+          )}
         </div>
 
-        <div className="mt-4 arena-panel rounded-2xl p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <details className="mt-4 arena-panel rounded-2xl p-5" open={false}>
+          <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-sm uppercase tracking-[0.28em] text-[var(--arena-jade)]">Student Summary</div>
+              <div className="text-sm uppercase text-[var(--arena-jade)]">Progress Center</div>
               <h3 className="font-bold text-2xl">สรุปความก้าวหน้าของนักเรียน</h3>
             </div>
-            <div className="rounded-full bg-[#f5eee5] px-4 py-2 text-sm text-[#6f5a50]">
+            <div className="rounded-full bg-[#edf6ff] px-4 py-2 text-sm font-bold text-[#2d4764]">
               ฝึกแล้ว {training.completedDays}/{training.totalDays} วัน • สอบแล้ว {seasonStats.testCount}/{game.seasonRounds} รอบ
             </div>
-          </div>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          </summary>
+          <div className="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-5">
             <div className="rounded-[28px] border border-cyan-200/80 bg-[linear-gradient(145deg,#eff8ff,#dff1fb_55%,#eef8fb)] p-5 text-[var(--arena-ink)] shadow-[0_20px_60px_rgba(6,182,212,0.12)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
@@ -448,7 +487,7 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
               </div>
             </div>
           </div>
-        </div>
+        </details>
 
         <div className="mt-4 rounded-2xl border border-yellow-400/30 bg-yellow-50 p-4 text-[var(--arena-ink)]">
           <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -463,28 +502,7 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
         </div>
       </div>
 
-      {/* Card grid */}
       <div className="max-w-6xl mx-auto px-4 pb-10">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {cards.map(c => (
-            <button key={c.key} onClick={c.onClick} disabled={c.disabled}
-                    className={`relative aspect-square overflow-hidden bg-gradient-to-br ${c.color} rounded-[28px] border border-white/10 p-5 text-left shadow-xl hover:scale-[1.03] transition transform disabled:opacity-50 disabled:hover:scale-100`}>
-              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,248,235,.24),transparent_42%),radial-gradient(circle_at_top_right,rgba(240,193,91,.18),transparent_28%)]"></div>
-              <div className="flex h-full flex-col justify-between">
-                <div className="flex justify-between items-start">
-                  <div className="text-3xl sm:text-4xl">{c.emoji}</div>
-                  {c.badge && <span className="text-xs bg-white/20 px-2 py-1 rounded-full max-w-[7.5rem] text-right">{c.badge}</span>}
-                </div>
-                <div className="relative z-10">
-                  <div className="mt-4 font-bold text-lg leading-tight">{c.title}</div>
-                  <div className="mt-2 text-sm opacity-90 leading-6">{c.desc}</div>
-                </div>
-                <div className="text-xs uppercase tracking-[0.24em] text-white/70">Open module</div>
-              </div>
-            </button>
-          ))}
-        </div>
-
         {/* Recent Tests */}
         {myTests.length > 0 && (
           <div className="mt-6 arena-panel rounded-2xl p-5 border border-white/10">

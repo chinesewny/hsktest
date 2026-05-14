@@ -139,6 +139,7 @@ window.StudentDashboard = function StudentDashboard({
   const game = window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game;
   const competitionEnabled = game.competitionEnabled !== false;
   const [tick, setTick] = useStateD(0);
+  const [openGuide, setOpenGuide] = useStateD(false);
   const [seasonStats, setSeasonStats] = useStateD(() => Progress.getStudentSeasonStats(user.studentId, user.classroom));
   const [classBoard, setClassBoard] = useStateD([]);
   useEffectD(() => {
@@ -176,48 +177,48 @@ window.StudentDashboard = function StudentDashboard({
   const competitionMaxScore = game.questionsPerTest * game.correctPoints;
   const cards = [{
     key: "train",
-    title: "ฝึกฝนวันนี้",
+    title: "ฝึกวันนี้",
     emoji: "📚",
     desc: dailyReview.today ? `แบบฝึกหลังเรียน ${dailyReview.today.score}/${dailyReview.today.total} (${dailyReview.today.accuracy}%)` : todayWords.length ? `${todayWords.length} คำใหม่รอคุณอยู่` : "วันนี้ไม่มีรอบฝึกใหม่",
-    color: "from-emerald-500 via-teal-500 to-cyan-500",
+    color: "from-cyan-500 via-sky-500 to-blue-600",
     onClick: () => onNav("training"),
     badge: dailyReview.today ? `ทบทวนแล้ว ${dailyReview.today.accuracy}%` : training.trainedToday ? "✓ ฝึกแล้ว" : todayWords.length ? "ยังไม่ทำ" : "วันพัก"
   }, {
     key: "test",
-    title: competitionEnabled && isTestDay ? "🔥 สอบประจำสัปดาห์!" : "ทดสอบประจำสัปดาห์",
-    emoji: "⚔️",
+    title: competitionEnabled && isTestDay ? "สอบวันนี้!" : "สอบรายสัปดาห์",
+    emoji: "⚡",
     desc: !competitionEnabled ? "แอดมินยังไม่เปิดระบบการแข่งขัน" : tookThisWeek ? "✓ สอบรอบนี้แล้ว" : isTestDay ? `สุ่ม ${game.questionsPerTest} ข้อจาก ${testCycle.totalWords} คำ` : "เปิดตามวันที่ตั้งไว้",
-    color: competitionEnabled && isTestDay && !tookThisWeek ? "from-rose-700 via-red-600 to-amber-500" : "from-stone-500 to-stone-700",
+    color: competitionEnabled && isTestDay && !tookThisWeek ? "from-pink-500 via-rose-500 to-orange-400" : "from-slate-500 to-slate-700",
     onClick: () => competitionEnabled && isTestDay && !tookThisWeek && onNav("test"),
     disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady
   }, {
     key: "board",
-    title: "กระดานผู้นำ",
+    title: "อันดับห้อง",
     emoji: "🏆",
     desc: competitionEnabled ? `อันดับชั้น ${user.classroom}` : "จะเปิดเมื่อแอดมินเปิดระบบการแข่งขัน",
-    color: competitionEnabled ? "from-amber-500 via-yellow-400 to-orange-400" : "from-stone-500 to-stone-700",
+    color: competitionEnabled ? "from-amber-400 via-yellow-300 to-lime-400" : "from-slate-500 to-slate-700",
     onClick: () => competitionEnabled && onNav("leaderboard"),
     disabled: !competitionEnabled
   }, {
     key: "shop",
-    title: "ร้านค้าไอเทม",
+    title: "ร้านไอเทม",
     emoji: "🛒",
     desc: `มีเหรียญ ${user.coins || 0} 🪙`,
-    color: "from-red-600 via-rose-600 to-orange-500",
+    color: "from-violet-500 via-fuchsia-500 to-pink-500",
     onClick: () => onNav("shop")
   }, {
     key: "profile",
     title: "โปรไฟล์",
     emoji: "👤",
-    desc: "ดูสถิติและความสำเร็จ",
-    color: "from-slate-700 via-zinc-700 to-stone-700",
+    desc: "สถิติและบัญชี",
+    color: "from-emerald-400 via-teal-500 to-cyan-500",
     onClick: () => onNav("profile")
   }, {
     key: "rewards",
-    title: "ของรางวัลของฉัน",
+    title: "รางวัลของฉัน",
     emoji: "🎁",
     desc: `${Progress.myRewards(user.studentId).length} ใบ`,
-    color: "from-amber-600 via-orange-500 to-red-500",
+    color: "from-orange-400 via-amber-400 to-yellow-300",
     onClick: () => onNav("rewards")
   }];
   if (user.role === "admin") {
@@ -233,14 +234,7 @@ window.StudentDashboard = function StudentDashboard({
   return /*#__PURE__*/React.createElement("div", {
     className: "scholar-shell arena-shell arena-grid arena-noise min-h-screen text-[var(--arena-ink)]"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "arena-orb bg-emerald-300/20 h-36 w-36 left-[6%] top-[10%]"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "arena-orb bg-yellow-300/20 h-52 w-52 right-[8%] top-[22%]",
-    style: {
-      animationDelay: "1.8s"
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "sticky top-0 z-40 border-b border-white/10 bg-[rgba(44,20,22,.78)] text-white backdrop-blur"
+    className: "sticky top-0 z-40 border-b border-white/40 bg-white/78 text-[var(--arena-ink)] backdrop-blur"
   }, /*#__PURE__*/React.createElement("div", {
     className: "max-w-6xl mx-auto px-4 py-3 flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("div", {
@@ -252,13 +246,13 @@ window.StudentDashboard = function StudentDashboard({
   }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "font-bold"
   }, user.fullname), /*#__PURE__*/React.createElement("div", {
-    className: "text-xs text-white/60"
+    className: "text-xs text-slate-500"
   }, user.classroom, " \u2022 \u0E23\u0E2B\u0E31\u0E2A ", user.studentId))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "text-sm text-amber-300 font-bold"
+    className: "rounded-full bg-amber-100 px-3 py-1 text-sm text-amber-700 font-bold"
   }, "\uD83E\uDE99 ", user.coins || 0), /*#__PURE__*/React.createElement("div", {
-    className: "text-sm text-orange-300 font-bold"
+    className: "rounded-full bg-rose-100 px-3 py-1 text-sm text-rose-700 font-bold"
   }, "\uD83D\uDD25 ", user.streak || 0), /*#__PURE__*/React.createElement("button", {
     onClick: onLogout,
     className: "cinnabar-btn px-3 py-1.5 rounded-lg text-sm"
@@ -267,17 +261,17 @@ window.StudentDashboard = function StudentDashboard({
   }, /*#__PURE__*/React.createElement("div", {
     className: "lacquer-panel rounded-[30px] p-6 shadow-2xl border border-white/15 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(78,216,223,.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(241,91,76,.16),transparent_28%),linear-gradient(135deg,rgba(246,198,79,.14),transparent_50%)]"
+    className: "absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.18),transparent_40%),linear-gradient(225deg,rgba(255,209,102,.20),transparent_46%)]"
   }), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between flex-wrap gap-4"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative z-10"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "font-display text-sm uppercase tracking-[0.28em] text-[var(--arena-gold-soft)]"
-  }, "Scholar Rank"), /*#__PURE__*/React.createElement("div", {
+    className: "font-display text-sm uppercase text-[var(--arena-gold-soft)]"
+  }, "My Learning Level"), /*#__PURE__*/React.createElement("div", {
     className: "font-display text-5xl font-black text-[var(--arena-cream)]"
   }, "Lv.", lvlInfo.level), /*#__PURE__*/React.createElement("div", {
-    className: "text-sm mt-2"
+    className: "text-sm mt-2 text-white/88"
   }, "XP ", lvlInfo.currentXp, " / ", lvlInfo.nextXp), /*#__PURE__*/React.createElement("div", {
     className: "w-64 h-3 bg-white/20 rounded-full mt-1 overflow-hidden"
   }, /*#__PURE__*/React.createElement("div", {
@@ -288,7 +282,7 @@ window.StudentDashboard = function StudentDashboard({
   }))), /*#__PURE__*/React.createElement("div", {
     className: "relative z-10 text-right"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "font-display text-sm uppercase tracking-[0.28em] text-[var(--arena-jade-soft)]"
+    className: "font-display text-sm uppercase text-cyan-100"
   }, "Season Board"), /*#__PURE__*/React.createElement("div", {
     className: "text-3xl font-bold"
   }, "\u0E23\u0E2D\u0E1A ", season.roundsCompleted, "/", game.seasonRounds), /*#__PURE__*/React.createElement("div", {
@@ -301,20 +295,71 @@ window.StudentDashboard = function StudentDashboard({
       width: `${season.roundsCompleted / game.seasonRounds * 100}%`
     }
   }))))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4 grid grid-cols-2 lg:grid-cols-6 gap-3"
+  }, cards.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c.key,
+    onClick: c.onClick,
+    disabled: c.disabled,
+    className: `relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0`
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.24),transparent_48%)]"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "relative z-10 flex h-full flex-col justify-between"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start justify-between gap-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-3xl"
+  }, c.emoji), c.badge && /*#__PURE__*/React.createElement("span", {
+    className: "max-w-[6rem] rounded-full bg-white/22 px-2 py-1 text-right text-[11px] leading-tight"
+  }, c.badge)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-base font-bold leading-tight"
+  }, c.title), /*#__PURE__*/React.createElement("div", {
+    className: "mt-1 text-xs leading-5 text-white/86"
+  }, c.desc)))))), /*#__PURE__*/React.createElement("div", {
     className: "mt-4 arena-panel rounded-2xl p-5"
   }, !competitionEnabled && /*#__PURE__*/React.createElement("div", {
     className: "mb-4 rounded-2xl border border-amber-300/40 bg-amber-100 px-4 py-3 text-sm text-[#7a4d22]"
   }, "\u0E23\u0E30\u0E1A\u0E1A\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19\u0E22\u0E31\u0E07\u0E1B\u0E34\u0E14\u0E2D\u0E22\u0E39\u0E48\u0E43\u0E19\u0E02\u0E13\u0E30\u0E19\u0E35\u0E49 \u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19\u0E22\u0E31\u0E07\u0E1D\u0E36\u0E01\u0E04\u0E33\u0E28\u0E31\u0E1E\u0E17\u0E4C\u0E1B\u0E23\u0E30\u0E08\u0E33\u0E27\u0E31\u0E19\u0E44\u0E14\u0E49\u0E15\u0E32\u0E21\u0E1B\u0E01\u0E15\u0E34 \u0E41\u0E25\u0E30\u0E08\u0E30\u0E40\u0E02\u0E49\u0E32\u0E2A\u0E2D\u0E1A\u0E44\u0E14\u0E49\u0E40\u0E21\u0E37\u0E48\u0E2D\u0E41\u0E2D\u0E14\u0E21\u0E34\u0E19\u0E40\u0E1B\u0E34\u0E14\u0E23\u0E30\u0E1A\u0E1A\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19"), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap items-center justify-between gap-3 mb-3"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "text-sm uppercase tracking-[0.28em] text-[var(--arena-jade)]"
-  }, "Adaptive Learning"), /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm uppercase text-[var(--arena-jade)]"
+  }, "Today Plan"), /*#__PURE__*/React.createElement("h3", {
     className: "font-bold text-2xl"
-  }, "\u0E01\u0E32\u0E23\u0E2A\u0E38\u0E48\u0E21\u0E04\u0E33\u0E15\u0E32\u0E21\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E01\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19\u0E23\u0E39\u0E49"), /*#__PURE__*/React.createElement("div", {
-    className: "text-xs text-[#75625a] mt-1"
-  }, "\u0E23\u0E30\u0E1A\u0E1A\u0E08\u0E30\u0E1B\u0E25\u0E14\u0E25\u0E47\u0E2D\u0E01 HSK \u0E23\u0E30\u0E14\u0E31\u0E1A\u0E16\u0E31\u0E14\u0E44\u0E1B\u0E2D\u0E31\u0E15\u0E42\u0E19\u0E21\u0E31\u0E15\u0E34\u0E40\u0E21\u0E37\u0E48\u0E2D\u0E04\u0E27\u0E32\u0E21\u0E41\u0E21\u0E48\u0E19\u0E22\u0E33\u0E02\u0E2D\u0E07\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E1B\u0E31\u0E08\u0E08\u0E38\u0E1A\u0E31\u0E19\u0E16\u0E36\u0E07 ", Math.round((adaptivePlan.config?.unlockThreshold || 0.7) * 100), "%")), /*#__PURE__*/React.createElement("div", {
-    className: "rounded-full bg-[#f3eadc] px-4 py-2 text-sm text-[#5b433b]"
-  }, "\u0E40\u0E2A\u0E49\u0E19\u0E17\u0E32\u0E07\u0E01\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19 HSK ", adaptivePlan.baseLevel, " \u2022 \u0E1B\u0E25\u0E14\u0E25\u0E47\u0E2D\u0E01\u0E41\u0E25\u0E49\u0E27 ", adaptivePlan.unlocked.length, "/3 \u0E23\u0E30\u0E14\u0E31\u0E1A")), /*#__PURE__*/React.createElement("div", {
+  }, "\u0E41\u0E1C\u0E19\u0E1D\u0E36\u0E01\u0E02\u0E2D\u0E07\u0E09\u0E31\u0E19")), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setOpenGuide(v => !v),
+    className: "ghost-btn rounded-full px-4 py-2 text-sm font-bold"
+  }, openGuide ? "ซ่อนรายละเอียด" : "ดูรายละเอียด HSK")), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-3 gap-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl border border-cyan-100 bg-cyan-50 p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-sm text-cyan-700"
+  }, "\u0E04\u0E33\u0E27\u0E31\u0E19\u0E19\u0E35\u0E49"), /*#__PURE__*/React.createElement("div", {
+    className: "text-3xl font-black text-cyan-700"
+  }, todayWords.length), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-slate-500"
+  }, "\u0E04\u0E33\u0E28\u0E31\u0E1E\u0E17\u0E4C\u0E17\u0E35\u0E48\u0E23\u0E2D\u0E1D\u0E36\u0E01")), /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-sm text-emerald-700"
+  }, "\u0E04\u0E27\u0E32\u0E21\u0E41\u0E21\u0E48\u0E19\u0E22\u0E33\u0E25\u0E48\u0E32\u0E2A\u0E38\u0E14"), /*#__PURE__*/React.createElement("div", {
+    className: "text-3xl font-black text-emerald-700"
+  }, dailyReview.today ? `${dailyReview.today.accuracy}%` : "--"), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-slate-500"
+  }, "\u0E08\u0E32\u0E01\u0E41\u0E1A\u0E1A\u0E1D\u0E36\u0E01\u0E2B\u0E25\u0E31\u0E07\u0E40\u0E23\u0E35\u0E22\u0E19")), /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl border border-amber-100 bg-amber-50 p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-sm text-amber-700"
+  }, "\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E17\u0E35\u0E48\u0E40\u0E1B\u0E34\u0E14\u0E41\u0E25\u0E49\u0E27"), /*#__PURE__*/React.createElement("div", {
+    className: "text-3xl font-black text-amber-700"
+  }, adaptivePlan.unlocked.length, "/3"), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-slate-500"
+  }, "\u0E40\u0E23\u0E34\u0E48\u0E21\u0E08\u0E32\u0E01 HSK ", adaptivePlan.baseLevel))), openGuide && /*#__PURE__*/React.createElement("div", {
+    className: "mt-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mb-3 rounded-full bg-[#edf6ff] px-4 py-2 text-sm text-[#2d4764] inline-flex"
+  }, "\u0E40\u0E2A\u0E49\u0E19\u0E17\u0E32\u0E07\u0E01\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19 HSK ", adaptivePlan.baseLevel, " \u2022 \u0E1B\u0E25\u0E14\u0E25\u0E47\u0E2D\u0E01\u0E41\u0E25\u0E49\u0E27 ", adaptivePlan.unlocked.length, "/3 \u0E23\u0E30\u0E14\u0E31\u0E1A"), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-3 gap-3 mb-3"
   }, [1, 2, 3].map(lvl => {
     const isUnlocked = adaptivePlan.unlocked.includes(lvl);
@@ -362,18 +407,19 @@ window.StudentDashboard = function StudentDashboard({
     className: "text-[#5e4a42]"
   }, adaptivePlan.unlocked.map(lvl => `HSK ${lvl}: ${adaptivePlan.distribution[lvl] || 0} คำ`).join("  •  ")))) : /*#__PURE__*/React.createElement("div", {
     className: "rounded-xl bg-[#f5eee5] p-3 text-xs text-[#78645c]"
-  }, "\uD83D\uDCA1 \u0E17\u0E33\u0E41\u0E1A\u0E1A\u0E1D\u0E36\u0E01\u0E2B\u0E25\u0E31\u0E07\u0E40\u0E23\u0E35\u0E22\u0E19\u0E15\u0E48\u0E2D\u0E40\u0E19\u0E37\u0E48\u0E2D\u0E07 \u2014 \u0E40\u0E21\u0E37\u0E48\u0E2D\u0E04\u0E27\u0E32\u0E21\u0E41\u0E21\u0E48\u0E19\u0E22\u0E33\u0E2A\u0E39\u0E07\u0E1E\u0E2D \u0E23\u0E30\u0E1A\u0E1A\u0E08\u0E30\u0E04\u0E48\u0E2D\u0E22 \u0E46 \u0E40\u0E23\u0E34\u0E48\u0E21\u0E41\u0E08\u0E01\u0E04\u0E33\u0E02\u0E2D\u0E07\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E16\u0E31\u0E14\u0E44\u0E1B\u0E43\u0E2B\u0E49\u0E1D\u0E36\u0E01\u0E04\u0E27\u0E1A\u0E04\u0E39\u0E48")), /*#__PURE__*/React.createElement("div", {
-    className: "mt-4 arena-panel rounded-2xl p-5"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-wrap items-center justify-between gap-3 mb-4"
+  }, "\uD83D\uDCA1 \u0E17\u0E33\u0E41\u0E1A\u0E1A\u0E1D\u0E36\u0E01\u0E2B\u0E25\u0E31\u0E07\u0E40\u0E23\u0E35\u0E22\u0E19\u0E15\u0E48\u0E2D\u0E40\u0E19\u0E37\u0E48\u0E2D\u0E07 \u2014 \u0E40\u0E21\u0E37\u0E48\u0E2D\u0E04\u0E27\u0E32\u0E21\u0E41\u0E21\u0E48\u0E19\u0E22\u0E33\u0E2A\u0E39\u0E07\u0E1E\u0E2D \u0E23\u0E30\u0E1A\u0E1A\u0E08\u0E30\u0E04\u0E48\u0E2D\u0E22 \u0E46 \u0E40\u0E23\u0E34\u0E48\u0E21\u0E41\u0E08\u0E01\u0E04\u0E33\u0E02\u0E2D\u0E07\u0E23\u0E30\u0E14\u0E31\u0E1A\u0E16\u0E31\u0E14\u0E44\u0E1B\u0E43\u0E2B\u0E49\u0E1D\u0E36\u0E01\u0E04\u0E27\u0E1A\u0E04\u0E39\u0E48"))), /*#__PURE__*/React.createElement("details", {
+    className: "mt-4 arena-panel rounded-2xl p-5",
+    open: false
+  }, /*#__PURE__*/React.createElement("summary", {
+    className: "flex cursor-pointer list-none flex-wrap items-center justify-between gap-3"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "text-sm uppercase tracking-[0.28em] text-[var(--arena-jade)]"
-  }, "Student Summary"), /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm uppercase text-[var(--arena-jade)]"
+  }, "Progress Center"), /*#__PURE__*/React.createElement("h3", {
     className: "font-bold text-2xl"
   }, "\u0E2A\u0E23\u0E38\u0E1B\u0E04\u0E27\u0E32\u0E21\u0E01\u0E49\u0E32\u0E27\u0E2B\u0E19\u0E49\u0E32\u0E02\u0E2D\u0E07\u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19")), /*#__PURE__*/React.createElement("div", {
-    className: "rounded-full bg-[#f5eee5] px-4 py-2 text-sm text-[#6f5a50]"
+    className: "rounded-full bg-[#edf6ff] px-4 py-2 text-sm font-bold text-[#2d4764]"
   }, "\u0E1D\u0E36\u0E01\u0E41\u0E25\u0E49\u0E27 ", training.completedDays, "/", training.totalDays, " \u0E27\u0E31\u0E19 \u2022 \u0E2A\u0E2D\u0E1A\u0E41\u0E25\u0E49\u0E27 ", seasonStats.testCount, "/", game.seasonRounds, " \u0E23\u0E2D\u0E1A")), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-1 xl:grid-cols-2 gap-5"
+    className: "mt-4 grid grid-cols-1 xl:grid-cols-2 gap-5"
   }, /*#__PURE__*/React.createElement("div", {
     className: "rounded-[28px] border border-cyan-200/80 bg-[linear-gradient(145deg,#eff8ff,#dff1fb_55%,#eef8fb)] p-5 text-[var(--arena-ink)] shadow-[0_20px_60px_rgba(6,182,212,0.12)]"
   }, /*#__PURE__*/React.createElement("div", {
@@ -537,32 +583,7 @@ window.StudentDashboard = function StudentDashboard({
     className: "text-sm text-[#8b6748]"
   }, "\u0E22\u0E34\u0E48\u0E07\u0E17\u0E33\u0E41\u0E1A\u0E1A\u0E1D\u0E36\u0E01\u0E23\u0E32\u0E22\u0E27\u0E31\u0E19\u0E2A\u0E21\u0E48\u0E33\u0E40\u0E2A\u0E21\u0E2D \u0E42\u0E2D\u0E01\u0E32\u0E2A\u0E44\u0E15\u0E48\u0E2D\u0E31\u0E19\u0E14\u0E31\u0E1A\u0E43\u0E19\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19\u0E01\u0E47\u0E22\u0E34\u0E48\u0E07\u0E14\u0E35\u0E02\u0E36\u0E49\u0E19")))), /*#__PURE__*/React.createElement("div", {
     className: "max-w-6xl mx-auto px-4 pb-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 lg:grid-cols-3 gap-4"
-  }, cards.map(c => /*#__PURE__*/React.createElement("button", {
-    key: c.key,
-    onClick: c.onClick,
-    disabled: c.disabled,
-    className: `relative aspect-square overflow-hidden bg-gradient-to-br ${c.color} rounded-[28px] border border-white/10 p-5 text-left shadow-xl hover:scale-[1.03] transition transform disabled:opacity-50 disabled:hover:scale-100`
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-[linear-gradient(135deg,rgba(255,248,235,.24),transparent_42%),radial-gradient(circle_at_top_right,rgba(240,193,91,.18),transparent_28%)]"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex h-full flex-col justify-between"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex justify-between items-start"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "text-3xl sm:text-4xl"
-  }, c.emoji), c.badge && /*#__PURE__*/React.createElement("span", {
-    className: "text-xs bg-white/20 px-2 py-1 rounded-full max-w-[7.5rem] text-right"
-  }, c.badge)), /*#__PURE__*/React.createElement("div", {
-    className: "relative z-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mt-4 font-bold text-lg leading-tight"
-  }, c.title), /*#__PURE__*/React.createElement("div", {
-    className: "mt-2 text-sm opacity-90 leading-6"
-  }, c.desc)), /*#__PURE__*/React.createElement("div", {
-    className: "text-xs uppercase tracking-[0.24em] text-white/70"
-  }, "Open module"))))), myTests.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, myTests.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "mt-6 arena-panel rounded-2xl p-5 border border-white/10"
   }, /*#__PURE__*/React.createElement("h3", {
     className: "font-bold text-lg mb-3"

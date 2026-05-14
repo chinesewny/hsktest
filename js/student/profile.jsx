@@ -37,6 +37,7 @@ window.Profile = function Profile({ user, onBack }) {
   const game = window.SystemSettings?.getGame ? window.SystemSettings.getGame() : window.APP_CONFIG.game;
   const [oldPw, setOldPw] = useStateP("");
   const [newPw, setNewPw] = useStateP("");
+  const [section, setSection] = useStateP("stats");
   const lvl = U.calcLevel(user.xp || 0);
   const shopMap = (window.SystemSettings?.getShopItems ? window.SystemSettings.getShopItems() : []).reduce((map, item) => {
     map[item.key] = item;
@@ -85,54 +86,78 @@ window.Profile = function Profile({ user, onBack }) {
             </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div className="mb-4 grid grid-cols-3 gap-2 rounded-2xl border border-white/70 bg-white/70 p-2 backdrop-blur">
           {[
-            ["🪙", user.coins||0, "เหรียญ"],
-            ["🔥", user.streak||0, "วันต่อเนื่อง"],
-            ["📚", trainedDays, "วันที่ฝึก"],
-            ["⚔️", tests.length, "สอบทั้งหมด"],
-            ["⭐", totalScore, "คะแนนรวม"],
-            ["🎯", avgAccuracy + "%", "ความแม่นยำ"],
-            ["🏆", bestScore, "คะแนนสูงสุด"],
-            ["🎁", Progress.myRewards(user.studentId).length, "รางวัลที่ได้"]
-          ].map((s,i) => (
-            <div key={i} className="bg-[rgba(255,255,255,.82)] backdrop-blur rounded-xl p-3 text-center border border-[#e7dac7]">
-              <div className="text-2xl">{s[0]}</div>
-              <div className="text-xl font-bold">{s[1]}</div>
-              <div className="text-xs text-[#7a665d]">{s[2]}</div>
-            </div>
+            ["stats", "สถิติ", "fa-chart-simple"],
+            ["bag", "กระเป๋า", "fa-bag-shopping"],
+            ["security", "รหัสผ่าน", "fa-key"]
+          ].map(([key, label, icon]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSection(key)}
+              className={`rounded-xl px-3 py-3 text-sm font-bold transition ${section === key ? "bg-blue-600 text-white shadow-lg" : "bg-white text-slate-600 hover:bg-blue-50"}`}
+            >
+              <i className={`fa-solid ${icon} mr-2`}></i>{label}
+            </button>
           ))}
         </div>
 
-        {/* Items */}
-        <div className="arena-panel rounded-2xl p-4 border border-white/10 mb-4">
-          <h3 className="font-bold mb-2">🎒 ไอเทมในกระเป๋า</h3>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(user.items||{}).map(([k,v]) => (
-              <div key={k} className="bg-[rgba(92,57,46,.08)] px-3 py-2 rounded-lg text-sm">
-                {shopMap[k]?.emoji || "🎒"} {shopMap[k]?.name || k} <b>{v}</b>
+        {section === "stats" && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            {[
+              ["🪙", user.coins||0, "เหรียญ"],
+              ["🔥", user.streak||0, "วันต่อเนื่อง"],
+              ["📚", trainedDays, "วันที่ฝึก"],
+              ["⚔️", tests.length, "สอบทั้งหมด"],
+              ["⭐", totalScore, "คะแนนรวม"],
+              ["🎯", avgAccuracy + "%", "ความแม่นยำ"],
+              ["🏆", bestScore, "คะแนนสูงสุด"],
+              ["🎁", Progress.myRewards(user.studentId).length, "รางวัลที่ได้"]
+            ].map((s,i) => (
+              <div key={i} className="bg-[rgba(255,255,255,.86)] backdrop-blur rounded-xl p-3 text-center border border-blue-100">
+                <div className="text-2xl">{s[0]}</div>
+                <div className="text-xl font-bold">{s[1]}</div>
+                <div className="text-xs text-slate-500">{s[2]}</div>
               </div>
             ))}
           </div>
-        </div>
+        )}
 
-        {/* Change Password */}
-        <form onSubmit={changePw} className="arena-panel rounded-2xl p-4 border border-white/10 space-y-3">
-          <h3 className="font-bold">🔑 เปลี่ยนรหัสผ่าน</h3>
-          <ProfilePasswordInput
-            placeholder="รหัสผ่านเดิม"
-            value={oldPw}
-            onChange={e=>setOldPw(e.target.value)}
-          />
-          <ProfilePasswordInput
-            placeholder="รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)"
-            value={newPw}
-            onChange={e=>setNewPw(e.target.value)}
-            minLength={6}
-          />
-          <button type="submit" className="cinnabar-btn w-full py-2 rounded-lg font-bold">บันทึก</button>
-        </form>
+        {section === "bag" && (
+          <div className="arena-panel rounded-2xl p-4 border border-white/10 mb-4">
+            <h3 className="font-bold mb-3">ไอเทมในกระเป๋า</h3>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(user.items||{}).length ? Object.entries(user.items||{}).map(([k,v]) => (
+                <div key={k} className="bg-blue-50 px-3 py-2 rounded-lg text-sm text-slate-700">
+                  {shopMap[k]?.emoji || "🎒"} {shopMap[k]?.name || k} <b>{v}</b>
+                </div>
+              )) : (
+                <div className="rounded-xl border border-dashed border-blue-200 bg-blue-50 p-4 text-sm text-slate-500">
+                  ยังไม่มีไอเทม ลองเข้าไปที่ร้านค้าเพื่อแลกของรางวัลได้
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {section === "security" && (
+          <form onSubmit={changePw} className="arena-panel rounded-2xl p-4 border border-white/10 space-y-3">
+            <h3 className="font-bold">เปลี่ยนรหัสผ่าน</h3>
+            <ProfilePasswordInput
+              placeholder="รหัสผ่านเดิม"
+              value={oldPw}
+              onChange={e=>setOldPw(e.target.value)}
+            />
+            <ProfilePasswordInput
+              placeholder="รหัสผ่านใหม่ (อย่างน้อย 6 ตัว)"
+              value={newPw}
+              onChange={e=>setNewPw(e.target.value)}
+              minLength={6}
+            />
+            <button type="submit" className="cinnabar-btn w-full py-2 rounded-lg font-bold">บันทึก</button>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -25,26 +25,26 @@
 
   <style>
     :root {
-      --arena-ink: #2e231e;
-      --arena-lacquer: #6e342d;
-      --arena-cinnabar: #b9442f;
-      --arena-cinnabar-bright: #de6144;
-      --arena-jade: #2f8f7a;
-      --arena-jade-soft: #71b8a1;
-      --arena-gold: #f0c15b;
-      --arena-gold-soft: #f8df9a;
-      --arena-cream: #fffaf0;
-      --arena-paper: #fffdf7;
-      --arena-paper-soft: #f7efe2;
-      --arena-paper-shadow: rgba(70, 42, 32, 0.12);
+      --arena-ink: #172033;
+      --arena-lacquer: #2546d2;
+      --arena-cinnabar: #ff4d6d;
+      --arena-cinnabar-bright: #ff7a59;
+      --arena-jade: #00a8a8;
+      --arena-jade-soft: #67e8f9;
+      --arena-gold: #ffd166;
+      --arena-gold-soft: #fff0a3;
+      --arena-cream: #ffffff;
+      --arena-paper: #ffffff;
+      --arena-paper-soft: #eef6ff;
+      --arena-paper-shadow: rgba(37, 70, 210, 0.14);
     }
     body {
       font-family: 'Sarabun', sans-serif;
-      color: #352721;
+      color: var(--arena-ink);
       background:
-        radial-gradient(circle at top, rgba(240,193,91,0.22), transparent 24%),
-        radial-gradient(circle at 15% 18%, rgba(222,97,68,0.10), transparent 20%),
-        linear-gradient(180deg, #fffefb 0%, #fbf4e8 55%, #f6ecdd 100%);
+        linear-gradient(135deg, rgba(103,232,249,0.18), transparent 32%),
+        linear-gradient(225deg, rgba(255,209,102,0.18), transparent 28%),
+        linear-gradient(180deg, #f8fbff 0%, #eef6ff 48%, #fff7ed 100%);
     }
     .font-zh { font-family: 'Noto Sans SC', sans-serif; }
     .font-display { font-family: 'Chakra Petch', sans-serif; letter-spacing: 0.02em; }
@@ -75,16 +75,15 @@
     }
     .arena-grid {
       background-image:
-        linear-gradient(rgba(185,124,91,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(185,124,91,.05) 1px, transparent 1px),
-        linear-gradient(45deg, rgba(113,184,161,.04) 25%, transparent 25%, transparent 50%, rgba(113,184,161,.04) 50%, rgba(113,184,161,.04) 75%, transparent 75%, transparent);
-      background-size: 28px 28px, 28px 28px, 56px 56px;
+        linear-gradient(rgba(37,70,210,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,70,210,.045) 1px, transparent 1px);
+      background-size: 30px 30px;
     }
     .arena-noise {
       background-image:
-        radial-gradient(circle at 20% 20%, rgba(113,184,161,.10), transparent 30%),
-        radial-gradient(circle at 80% 0%, rgba(222,97,68,.10), transparent 24%),
-        radial-gradient(circle at 50% 80%, rgba(240,193,91,.12), transparent 28%);
+        linear-gradient(135deg, rgba(255,77,109,.08), transparent 38%),
+        linear-gradient(225deg, rgba(0,168,168,.08), transparent 34%),
+        linear-gradient(0deg, rgba(255,209,102,.12), transparent 45%);
     }
     .arena-orb {
       position: absolute;
@@ -120,12 +119,12 @@
     }
     .arena-panel {
       background:
-        linear-gradient(180deg, rgba(255,255,255,.96), rgba(251,245,235,.96)),
-        linear-gradient(135deg, rgba(240,193,91,.06), transparent 55%);
-      border: 1px solid rgba(185,124,91,.12);
-      box-shadow: 0 20px 44px rgba(70,42,32,.10);
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,251,255,.94)),
+        linear-gradient(135deg, rgba(103,232,249,.08), transparent 55%);
+      border: 1px solid rgba(37,70,210,.10);
+      box-shadow: 0 20px 44px rgba(37,70,210,.10);
       backdrop-filter: blur(16px);
-      color: #47322c;
+      color: var(--arena-ink);
     }
     .arena-badge {
       border: 1px solid rgba(240,193,91,.45);
@@ -140,9 +139,9 @@
       min-height: 100vh;
       color: var(--arena-ink);
       background:
-        radial-gradient(circle at top, rgba(240,193,91,.16), transparent 18%),
-        radial-gradient(circle at 82% 14%, rgba(113,184,161,.10), transparent 22%),
-        linear-gradient(180deg, #fffefb 0%, #fbf4e8 58%, #f5ebdd 100%);
+        linear-gradient(135deg, rgba(103,232,249,.16), transparent 34%),
+        linear-gradient(225deg, rgba(255,77,109,.10), transparent 30%),
+        linear-gradient(180deg, #f9fbff 0%, #eef7ff 58%, #fff7ed 100%);
     }
     .scholar-shell::before {
       content: "";
@@ -157,19 +156,18 @@
     }
     .paper-card {
       background:
-        linear-gradient(180deg, rgba(255,248,235,.98), rgba(246,236,214,.96)),
-        radial-gradient(circle at top right, rgba(240,193,91,.18), transparent 30%);
-      color: #402120;
-      border: 1px solid rgba(166,45,43,.14);
+        linear-gradient(180deg, rgba(255,255,255,.98), rgba(239,246,255,.96)),
+        linear-gradient(135deg, rgba(255,209,102,.18), transparent 42%);
+      color: var(--arena-ink);
+      border: 1px solid rgba(37,70,210,.12);
       box-shadow: 0 18px 50px var(--arena-paper-shadow);
     }
     .lacquer-panel {
       background:
-        linear-gradient(135deg, rgba(185,68,47,.96), rgba(128,52,40,.94)),
-        radial-gradient(circle at top, rgba(255,237,185,.22), transparent 34%);
+        linear-gradient(135deg, #2447d8 0%, #7c3aed 48%, #ff4d6d 100%);
       color: var(--arena-cream);
-      border: 1px solid rgba(248,223,154,.16);
-      box-shadow: 0 18px 42px rgba(115,58,43,.18);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 18px 42px rgba(37,70,210,.22);
     }
     .cinnabar-btn {
       background: linear-gradient(135deg, var(--arena-cinnabar-bright), var(--arena-cinnabar));
@@ -177,9 +175,9 @@
       box-shadow: 0 12px 28px rgba(166,45,43,.35);
     }
     .jade-btn {
-      background: linear-gradient(135deg, #2aa381, var(--arena-jade));
+      background: linear-gradient(135deg, #22d3ee, var(--arena-jade));
       color: #f6fff8;
-      box-shadow: 0 12px 28px rgba(31,138,112,.32);
+      box-shadow: 0 12px 28px rgba(6,182,212,.26);
     }
     .gold-btn {
       background: linear-gradient(135deg, #f7d57a, var(--arena-gold));
@@ -188,15 +186,15 @@
     }
     .ghost-btn {
       background: rgba(255,255,255,.82);
-      border: 1px solid rgba(185,124,91,.16);
-      color: #59342d;
+      border: 1px solid rgba(37,70,210,.12);
+      color: var(--arena-ink);
       backdrop-filter: blur(12px);
       box-shadow: 0 10px 24px rgba(70,42,32,.08);
     }
     .page-heading {
       font-family: 'Chakra Petch', sans-serif;
-      letter-spacing: .03em;
-      color: #442a24;
+      letter-spacing: 0;
+      color: var(--arena-ink);
     }
     .section-kicker {
       font-family: 'Chakra Petch', sans-serif;
@@ -255,33 +253,33 @@
   <script src="js/config.js"></script>
   <script src="js/firebase-init.js"></script>
   <script src="js/google-sheets.js"></script>
-  <script src="js/system-settings.js?v=20260507b"></script>
+  <script src="js/system-settings.js?v=20260514a"></script>
 
   <!-- Vocabulary data -->
-  <script src="js/data/hsk1.js?v=20260507b"></script>
-  <script src="js/data/hsk2.js?v=20260507b"></script>
-  <script src="js/data/hsk3.js?v=20260507b"></script>
-  <script src="js/vocab-images.js?v=20260507b"></script>
+  <script src="js/data/hsk1.js?v=20260514a"></script>
+  <script src="js/data/hsk2.js?v=20260514a"></script>
+  <script src="js/data/hsk3.js?v=20260514a"></script>
+  <script src="js/vocab-images.js?v=20260514a"></script>
 
   <!-- Cache busting via meta build version -->
-  <script>window.__BUILD__ = "3.1.1-" + Date.now();</script>
+  <script>window.__BUILD__ = "3.1.2-" + Date.now();</script>
 
   <!-- Runtime helpers -->
-  <script src="dist/js/utils.js?v=20260507b"></script>
-  <script src="js/progress.js?v=20260507b"></script>
-  <script src="dist/js/auth.js?v=20260507b"></script>
-  <script src="dist/js/hanzi-stroke-writer.js?v=20260507b"></script>
+  <script src="dist/js/utils.js?v=20260514a"></script>
+  <script src="js/progress.js?v=20260514a"></script>
+  <script src="dist/js/auth.js?v=20260514a"></script>
+  <script src="dist/js/hanzi-stroke-writer.js?v=20260514a"></script>
 
-  <script src="dist/js/student/dashboard.js?v=20260507b"></script>
-  <script src="dist/js/student/daily-training.js?v=20260507b"></script>
-  <script src="dist/js/student/weekly-test.js?v=20260507b"></script>
-  <script src="dist/js/student/leaderboard.js?v=20260507b"></script>
-  <script src="dist/js/student/shop.js?v=20260507b"></script>
-  <script src="dist/js/student/profile.js?v=20260507b"></script>
-  <script src="dist/js/student/rewards.js?v=20260507b"></script>
+  <script src="dist/js/student/dashboard.js?v=20260514a"></script>
+  <script src="dist/js/student/daily-training.js?v=20260514a"></script>
+  <script src="dist/js/student/weekly-test.js?v=20260514a"></script>
+  <script src="dist/js/student/leaderboard.js?v=20260514a"></script>
+  <script src="dist/js/student/shop.js?v=20260514a"></script>
+  <script src="dist/js/student/profile.js?v=20260514a"></script>
+  <script src="dist/js/student/rewards.js?v=20260514a"></script>
 
-  <script src="dist/js/admin/admin-panel.js?v=20260507b"></script>
+  <script src="dist/js/admin/admin-panel.js?v=20260514a"></script>
 
-  <script src="dist/js/app.js?v=20260507b"></script>
+  <script src="dist/js/app.js?v=20260514a"></script>
 </body>
 </html>
