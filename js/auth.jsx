@@ -23,7 +23,7 @@ function withTimeout(promise, timeoutMs, label) {
 }
 
 function getBootstrapAdminConfig() {
-  return window.APP_CONFIG.admin?.bootstrapAccount || null;
+  return window.APP_CONFIG?.admin?.bootstrapAccount || null;
 }
 
 function getBootstrapAdminProfile() {
@@ -56,13 +56,14 @@ function normalizeLoginIdentifier(identifier = "") {
 }
 
 function normalizeUser(user = {}) {
+  const adminStudentIds = window.APP_CONFIG?.admin?.studentIds || [];
   return {
     studentId: user.studentId || "",
     fullname: user.fullname || "",
     email: user.email || "",
     classroom: user.classroom || "",
     classNumber: user.classNumber || "",
-    role: user.role || (window.APP_CONFIG.admin.studentIds.includes(user.studentId) ? "admin" : "student"),
+    role: user.role || (adminStudentIds.includes(user.studentId) ? "admin" : "student"),
     createdAt: user.createdAt || new Date().toISOString(),
     updatedAt: user.updatedAt || new Date().toISOString(),
     avatar: user.avatar || "🐉",

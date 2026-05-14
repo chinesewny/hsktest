@@ -2,7 +2,12 @@
  * Sentence Practice – ฝึก/ทดสอบประโยคจากคลังคำศัพท์
  * ทักษะ: ฟัง พูด อ่าน (ยังไม่เปิดทั่วไปจนกว่าแอดมินเปิด)
  * =========================================================== */
-const { useState: useStateS, useMemo: useMemoS, useRef: useRefS, useEffect: useEffectS } = React;
+const {
+  useState: useStateSentence,
+  useMemo: useMemoSentence,
+  useRef: useRefSentence,
+  useEffect: useEffectSentence
+} = React;
 
 const SENTENCE_PRACTICE_KEY = "hsk_sentence_practice_logs";
 const SENTENCE_TEST_KEY = "hsk_sentence_test_scores";
@@ -71,17 +76,17 @@ function makeSentenceQuestions(sentences, total = 6) {
 }
 
 window.SentencePractice = function SentencePractice({ user, onBack }) {
-  const sentenceBank = useMemoS(() => buildSentenceBank(), []);
-  const [mode, setMode] = useStateS("practice");
-  const [idx, setIdx] = useStateS(0);
-  const [questions, setQuestions] = useStateS(() => makeSentenceQuestions(sentenceBank, 6));
-  const [answered, setAnswered] = useStateS(null);
-  const [score, setScore] = useStateS(0);
-  const [details, setDetails] = useStateS([]);
-  const [speechState, setSpeechState] = useStateS({ listening: false, transcript: "", accuracy: null, error: "", unsupported: false });
-  const speechRef = useRefS(null);
+  const sentenceBank = useMemoSentence(() => buildSentenceBank(), []);
+  const [mode, setMode] = useStateSentence("practice");
+  const [idx, setIdx] = useStateSentence(0);
+  const [questions, setQuestions] = useStateSentence(() => makeSentenceQuestions(sentenceBank, 6));
+  const [answered, setAnswered] = useStateSentence(null);
+  const [score, setScore] = useStateSentence(0);
+  const [details, setDetails] = useStateSentence([]);
+  const [speechState, setSpeechState] = useStateSentence({ listening: false, transcript: "", accuracy: null, error: "", unsupported: false });
+  const speechRef = useRefSentence(null);
 
-  useEffectS(() => () => {
+  useEffectSentence(() => () => {
     if (speechRef.current) speechRef.current.abort();
   }, []);
 

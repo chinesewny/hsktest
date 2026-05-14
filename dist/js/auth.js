@@ -26,7 +26,7 @@ function withTimeout(promise, timeoutMs, label) {
   return Promise.race([promise, new Promise((_, rej) => setTimeout(() => rej(new Error(`${label} timeout`)), timeoutMs))]);
 }
 function getBootstrapAdminConfig() {
-  return window.APP_CONFIG.admin?.bootstrapAccount || null;
+  return window.APP_CONFIG?.admin?.bootstrapAccount || null;
 }
 function getBootstrapAdminProfile() {
   const cfg = getBootstrapAdminConfig();
@@ -55,13 +55,14 @@ function normalizeLoginIdentifier(identifier = "") {
   return String(identifier || "").trim();
 }
 function normalizeUser(user = {}) {
+  const adminStudentIds = window.APP_CONFIG?.admin?.studentIds || [];
   return {
     studentId: user.studentId || "",
     fullname: user.fullname || "",
     email: user.email || "",
     classroom: user.classroom || "",
     classNumber: user.classNumber || "",
-    role: user.role || (window.APP_CONFIG.admin.studentIds.includes(user.studentId) ? "admin" : "student"),
+    role: user.role || (adminStudentIds.includes(user.studentId) ? "admin" : "student"),
     createdAt: user.createdAt || new Date().toISOString(),
     updatedAt: user.updatedAt || new Date().toISOString(),
     avatar: user.avatar || "🐉",
