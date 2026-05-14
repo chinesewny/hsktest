@@ -138,7 +138,8 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
       onClick: () => onNav("training"),
       badge: dailyReview.today
         ? `ทบทวนแล้ว ${dailyReview.today.accuracy}%`
-        : (training.trainedToday ? "✓ ฝึกแล้ว" : (todayWords.length ? "ยังไม่ทำ" : "วันพัก"))
+        : (training.trainedToday ? "✓ ฝึกแล้ว" : (todayWords.length ? "ยังไม่ทำ" : "วันพัก")),
+      attention: !dailyReview.today && !training.trainedToday && todayWords.length > 0
     },
     {
       key:"test", title:competitionEnabled && isTestDay ? "สอบวันนี้!" : "สอบรายสัปดาห์", emoji:"⚡",
@@ -147,7 +148,8 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
         : (tookThisWeek ? "✓ สอบรอบนี้แล้ว" : (isTestDay ? `สุ่ม ${game.questionsPerTest} ข้อจาก ${testCycle.totalWords} คำ` : "เปิดตามวันที่ตั้งไว้")),
       color: competitionEnabled && isTestDay && !tookThisWeek ? "from-pink-500 via-rose-500 to-orange-400" : "from-slate-500 to-slate-700",
       onClick: () => competitionEnabled && isTestDay && !tookThisWeek && onNav("test"),
-      disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady
+      disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady,
+      attention: competitionEnabled && isTestDay && !tookThisWeek && testCycle.isReady
     },
     {
       key:"board", title:"อันดับห้อง", emoji:"🏆",
@@ -234,11 +236,14 @@ window.StudentDashboard = function StudentDashboard({ user, onNav, onLogout }) {
         <div className="mt-4 grid grid-cols-2 lg:grid-cols-6 gap-3">
           {cards.map(c => (
             <button key={c.key} onClick={c.onClick} disabled={c.disabled}
-                    className={`relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0`}>
+                    className={`relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0 ${c.attention ? "attention-glow ring-2 ring-white/50" : ""}`}>
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.24),transparent_48%)]"></div>
               <div className="relative z-10 flex h-full flex-col justify-between">
                 <div className="flex items-start justify-between gap-2">
                   <div className="text-3xl">{c.emoji}</div>
+                  {c.attention && (
+                    <span className="attention-dot absolute right-3 top-3 h-3 w-3 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,.95)]"></span>
+                  )}
                   {c.badge && <span className="max-w-[6rem] rounded-full bg-white/22 px-2 py-1 text-right text-[11px] leading-tight">{c.badge}</span>}
                 </div>
                 <div>

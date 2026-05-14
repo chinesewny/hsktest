@@ -73,8 +73,18 @@
       0%, 100% { transform: scale(1); }
       45% { transform: scale(1.12); }
     }
+    @keyframes attentionGlow {
+      0%, 100% { box-shadow: 0 16px 32px rgba(14,165,233,.18), 0 0 0 0 rgba(255,255,255,.42); }
+      50% { box-shadow: 0 20px 42px rgba(244,114,182,.28), 0 0 0 8px rgba(255,255,255,.10); }
+    }
+    @keyframes attentionDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.28); opacity: .62; }
+    }
     .purchase-pop { animation: purchasePop .36s ease-out both; }
     .coin-bump { animation: coinBump .42s ease-out; }
+    .attention-glow { animation: attentionGlow 1.45s ease-in-out infinite; }
+    .attention-dot { animation: attentionDot .9s ease-in-out infinite; }
     @keyframes arenaFloat {
       0% { transform: translate3d(0,0,0) scale(1); }
       50% { transform: translate3d(0,-12px,0) scale(1.04); }
@@ -264,33 +274,33 @@
   <script src="js/config.js"></script>
   <script src="js/firebase-init.js"></script>
   <script src="js/google-sheets.js"></script>
-  <script src="js/system-settings.js?v=20260514c"></script>
+  <script src="js/system-settings.js?v=20260514d"></script>
 
   <!-- Vocabulary data -->
-  <script src="js/data/hsk1.js?v=20260514c"></script>
-  <script src="js/data/hsk2.js?v=20260514c"></script>
-  <script src="js/data/hsk3.js?v=20260514c"></script>
-  <script src="js/vocab-images.js?v=20260514c"></script>
+  <script src="js/data/hsk1.js?v=20260514d"></script>
+  <script src="js/data/hsk2.js?v=20260514d"></script>
+  <script src="js/data/hsk3.js?v=20260514d"></script>
+  <script src="js/vocab-images.js?v=20260514d"></script>
 
   <!-- Cache busting via meta build version -->
-  <script>window.__BUILD__ = "3.1.4-" + Date.now();</script>
+  <script>window.__BUILD__ = "3.1.5-" + Date.now();</script>
 
   <!-- Runtime helpers -->
-  <script src="dist/js/utils.js?v=20260514c"></script>
-  <script src="js/progress.js?v=20260514c"></script>
-  <script src="dist/js/auth.js?v=20260514c"></script>
-  <script src="dist/js/hanzi-stroke-writer.js?v=20260514c"></script>
+  <script src="dist/js/utils.js?v=20260514d"></script>
+  <script src="js/progress.js?v=20260514d"></script>
+  <script src="dist/js/auth.js?v=20260514d"></script>
+  <script src="dist/js/hanzi-stroke-writer.js?v=20260514d"></script>
 
-  <script src="dist/js/student/dashboard.js?v=20260514c"></script>
-  <script src="dist/js/student/daily-training.js?v=20260514c"></script>
-  <script src="dist/js/student/weekly-test.js?v=20260514c"></script>
-  <script src="dist/js/student/leaderboard.js?v=20260514c"></script>
-  <script src="dist/js/student/shop.js?v=20260514c"></script>
-  <script src="dist/js/student/profile.js?v=20260514c"></script>
-  <script src="dist/js/student/rewards.js?v=20260514c"></script>
+  <script src="dist/js/student/dashboard.js?v=20260514d"></script>
+  <script src="dist/js/student/daily-training.js?v=20260514d"></script>
+  <script src="dist/js/student/weekly-test.js?v=20260514d"></script>
+  <script src="dist/js/student/leaderboard.js?v=20260514d"></script>
+  <script src="dist/js/student/shop.js?v=20260514d"></script>
+  <script src="dist/js/student/profile.js?v=20260514d"></script>
+  <script src="dist/js/student/rewards.js?v=20260514d"></script>
 
-  <script src="dist/js/admin/admin-panel.js?v=20260514c"></script>
+  <script src="dist/js/admin/admin-panel.js?v=20260514d"></script>
 
-  <script src="dist/js/app.js?v=20260514c"></script>
+  <script src="dist/js/app.js?v=20260514d"></script>
 </body>
 </html>

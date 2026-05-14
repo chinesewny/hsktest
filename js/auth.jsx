@@ -434,6 +434,10 @@ window.AuthService = {
   async fetchAllUsers() {
     ensureBootstrapAdmin();
     const localList = this.allUsers();
+    const mergedById = {};
+    localList.forEach(user => {
+      if (user?.studentId) mergedById[user.studentId] = normalizeUser(user);
+    });
     try {
       let remoteUsers = [];
       if (window.fbDB) {
@@ -447,8 +451,11 @@ window.AuthService = {
         const rows = await GSheets.read("Members");
         remoteUsers = rows.map(row => normalizeUser(row));
       }
-      remoteUsers.forEach(saveLocalUser);
-      return remoteUsers.length ? remoteUsers : localList;
+      remoteUsers.forEach((user) => {
+        const saved = saveLocalUser(user);
+        if (saved?.studentId) mergedById[saved.studentId] = normalizeUser(saved);
+      });
+      return Object.values(mergedById);
     } catch (e) {
       console.warn("[auth] fetchAllUsers failed", e.message);
       return localList;
@@ -571,6 +578,7 @@ function RegisterForm({ onSwitch, onSuccess }) {
     classroom:"ม.1", classNumber:""
   });
   const [loading, setLoading] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState(null);
   const setField = (k,v) => setF(p => ({...p, [k]:v}));
 
   const submit = async (e) => {
@@ -579,11 +587,38 @@ function RegisterForm({ onSwitch, onSuccess }) {
     setLoading(true);
     try {
       const u = await AuthService.register(f);
-      U.toast("สมัครสมาชิกสำเร็จ! เริ่มผจญภัยกันเลย", "success"); U.sfxLevelUp();
-      onSuccess(u);
+      setRegisteredUser(u);
+      U.toast("สมัครสมาชิกสำเร็จ! ตรวจข้อมูลในกล่องยืนยันได้เลย", "success"); U.sfxLevelUp();
     } catch (e) { U.toast(e.message, "error"); U.sfxWrong(); }
     finally { setLoading(false); }
   };
+
+  if (registeredUser) {
+    return (
+      <div className="space-y-4 text-center">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-5xl">✓</div>
+        <div>
+          <h2 className="text-2xl font-black text-gray-800">สมัครสมาชิกสำเร็จ</h2>
+          <p className="mt-1 text-sm text-gray-600">ระบบบันทึกข้อมูลนักเรียนเรียบร้อยแล้ว</p>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-left text-sm">
+          <div className="font-bold text-emerald-800">{registeredUser.fullname}</div>
+          <div className="mt-1 text-gray-700">รหัส {registeredUser.studentId} • {registeredUser.classroom} • เลขที่ {registeredUser.classNumber || "-"}</div>
+          <div className="mt-1 text-gray-700">{registeredUser.email}</div>
+        </div>
+        <button
+          type="button"
+          onClick={() => onSuccess(registeredUser)}
+          className="jade-btn mobile-btn w-full rounded-xl py-3 font-bold text-lg"
+        >
+          เริ่มใช้งาน
+        </button>
+        <button type="button" onClick={()=>onSwitch("login")} className="w-full text-center text-rose-600 hover:underline text-sm">
+          กลับไปหน้าเข้าสู่ระบบ
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={submit} className="space-y-3">

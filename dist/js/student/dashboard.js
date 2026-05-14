@@ -182,7 +182,8 @@ window.StudentDashboard = function StudentDashboard({
     desc: dailyReview.today ? `แบบฝึกหลังเรียน ${dailyReview.today.score}/${dailyReview.today.total} (${dailyReview.today.accuracy}%)` : todayWords.length ? `${todayWords.length} คำใหม่รอคุณอยู่` : "วันนี้ไม่มีรอบฝึกใหม่",
     color: "from-cyan-500 via-sky-500 to-blue-600",
     onClick: () => onNav("training"),
-    badge: dailyReview.today ? `ทบทวนแล้ว ${dailyReview.today.accuracy}%` : training.trainedToday ? "✓ ฝึกแล้ว" : todayWords.length ? "ยังไม่ทำ" : "วันพัก"
+    badge: dailyReview.today ? `ทบทวนแล้ว ${dailyReview.today.accuracy}%` : training.trainedToday ? "✓ ฝึกแล้ว" : todayWords.length ? "ยังไม่ทำ" : "วันพัก",
+    attention: !dailyReview.today && !training.trainedToday && todayWords.length > 0
   }, {
     key: "test",
     title: competitionEnabled && isTestDay ? "สอบวันนี้!" : "สอบรายสัปดาห์",
@@ -190,7 +191,8 @@ window.StudentDashboard = function StudentDashboard({
     desc: !competitionEnabled ? "แอดมินยังไม่เปิดระบบการแข่งขัน" : tookThisWeek ? "✓ สอบรอบนี้แล้ว" : isTestDay ? `สุ่ม ${game.questionsPerTest} ข้อจาก ${testCycle.totalWords} คำ` : "เปิดตามวันที่ตั้งไว้",
     color: competitionEnabled && isTestDay && !tookThisWeek ? "from-pink-500 via-rose-500 to-orange-400" : "from-slate-500 to-slate-700",
     onClick: () => competitionEnabled && isTestDay && !tookThisWeek && onNav("test"),
-    disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady
+    disabled: !competitionEnabled || !isTestDay || tookThisWeek || !testCycle.isReady,
+    attention: competitionEnabled && isTestDay && !tookThisWeek && testCycle.isReady
   }, {
     key: "board",
     title: "อันดับห้อง",
@@ -300,7 +302,7 @@ window.StudentDashboard = function StudentDashboard({
     key: c.key,
     onClick: c.onClick,
     disabled: c.disabled,
-    className: `relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0`
+    className: `relative min-h-[132px] overflow-hidden bg-gradient-to-br ${c.color} rounded-2xl border border-white/20 p-4 text-left text-white shadow-lg hover:-translate-y-1 hover:shadow-xl transition disabled:opacity-50 disabled:hover:translate-y-0 ${c.attention ? "attention-glow ring-2 ring-white/50" : ""}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.24),transparent_48%)]"
   }), /*#__PURE__*/React.createElement("div", {
@@ -309,7 +311,9 @@ window.StudentDashboard = function StudentDashboard({
     className: "flex items-start justify-between gap-2"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-3xl"
-  }, c.emoji), c.badge && /*#__PURE__*/React.createElement("span", {
+  }, c.emoji), c.attention && /*#__PURE__*/React.createElement("span", {
+    className: "attention-dot absolute right-3 top-3 h-3 w-3 rounded-full bg-yellow-300 shadow-[0_0_18px_rgba(250,204,21,.95)]"
+  }), c.badge && /*#__PURE__*/React.createElement("span", {
     className: "max-w-[6rem] rounded-full bg-white/22 px-2 py-1 text-right text-[11px] leading-tight"
   }, c.badge)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-base font-bold leading-tight"

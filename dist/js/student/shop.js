@@ -82,9 +82,15 @@ window.Shop = function Shop({
     U.sfxLevelUp();
   };
   const setAvatar = a => {
+    const optimistic = {
+      ...u,
+      avatar: a,
+      updatedAt: new Date().toISOString()
+    };
+    setU(optimistic);
     const newU = AuthService.updateUser(u.studentId, {
       avatar: a
-    });
+    }) || optimistic;
     setU(newU);
     refresh && refresh();
     showNotice({
@@ -210,7 +216,7 @@ window.Shop = function Shop({
     className: "arena-panel rounded-2xl p-4 border border-white/10"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mb-4 flex flex-col items-center gap-3 rounded-[28px] border border-white/10 bg-slate-950/35 p-5 text-center"
-  }, renderAvatarPreview(u.avatar || "🐉"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, renderAvatarPreview(u.avatar || "🐉", "🐉", "h-24 w-24"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-sm uppercase tracking-[0.24em] text-[#4d7b70]"
   }, "Custom Avatar"), /*#__PURE__*/React.createElement("div", {
     className: "text-sm text-[#756159]"
@@ -227,6 +233,6 @@ window.Shop = function Shop({
   }, AVATARS.map(a => /*#__PURE__*/React.createElement("button", {
     key: a,
     onClick: () => setAvatar(a),
-    className: `flex h-16 w-16 items-center justify-center rounded-2xl text-3xl transition ${u.avatar === a ? "bg-yellow-400/40 border-2 border-yellow-300" : "bg-white/5 hover:bg-white/15"}`
+    className: `flex h-16 w-16 items-center justify-center rounded-2xl text-3xl transition ${u.avatar === a ? "bg-yellow-400/50 border-2 border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,.35)] scale-105" : "bg-white/5 hover:bg-white/15"}`
   }, a))))));
 };

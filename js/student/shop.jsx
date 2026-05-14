@@ -64,7 +64,9 @@ window.Shop = function Shop({ user, onBack, refresh }) {
   };
 
   const setAvatar = (a) => {
-    const newU = AuthService.updateUser(u.studentId, { avatar: a });
+    const optimistic = { ...u, avatar: a, updatedAt: new Date().toISOString() };
+    setU(optimistic);
+    const newU = AuthService.updateUser(u.studentId, { avatar: a }) || optimistic;
     setU(newU); refresh && refresh();
     showNotice({
       type: "success",
@@ -187,9 +189,9 @@ window.Shop = function Shop({ user, onBack, refresh }) {
 
         {/* Avatars */}
         <h2 className="text-lg font-bold mb-3">🎭 เปลี่ยน Avatar (ฟรี)</h2>
-        <div className="arena-panel rounded-2xl p-4 border border-white/10">
+  <div className="arena-panel rounded-2xl p-4 border border-white/10">
           <div className="mb-4 flex flex-col items-center gap-3 rounded-[28px] border border-white/10 bg-slate-950/35 p-5 text-center">
-            {renderAvatarPreview(u.avatar || "🐉")}
+            {renderAvatarPreview(u.avatar || "🐉", "🐉", "h-24 w-24")}
             <div>
               <div className="text-sm uppercase tracking-[0.24em] text-[#4d7b70]">Custom Avatar</div>
               <div className="text-sm text-[#756159]">อัปโหลดรูปของตัวเองได้ ขนาดไม่เกิน 1 MB</div>
@@ -203,7 +205,7 @@ window.Shop = function Shop({ user, onBack, refresh }) {
             {AVATARS.map(a => (
               <button key={a} onClick={()=>setAvatar(a)}
                       className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl transition ${
-                        u.avatar===a ? "bg-yellow-400/40 border-2 border-yellow-300" : "bg-white/5 hover:bg-white/15"
+                        u.avatar===a ? "bg-yellow-400/50 border-2 border-yellow-300 shadow-[0_0_20px_rgba(250,204,21,.35)] scale-105" : "bg-white/5 hover:bg-white/15"
                       }`}>
                 {a}
               </button>

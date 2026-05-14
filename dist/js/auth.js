@@ -434,6 +434,10 @@ window.AuthService = {
   async fetchAllUsers() {
     ensureBootstrapAdmin();
     const localList = this.allUsers();
+    const mergedById = {};
+    localList.forEach(user => {
+      if (user?.studentId) mergedById[user.studentId] = normalizeUser(user);
+    });
     try {
       let remoteUsers = [];
       if (window.fbDB) {
@@ -443,8 +447,11 @@ window.AuthService = {
         const rows = await GSheets.read("Members");
         remoteUsers = rows.map(row => normalizeUser(row));
       }
-      remoteUsers.forEach(saveLocalUser);
-      return remoteUsers.length ? remoteUsers : localList;
+      remoteUsers.forEach(user => {
+        const saved = saveLocalUser(user);
+        if (saved?.studentId) mergedById[saved.studentId] = normalizeUser(saved);
+      });
+      return Object.values(mergedById);
     } catch (e) {
       console.warn("[auth] fetchAllUsers failed", e.message);
       return localList;
@@ -598,6 +605,7 @@ function RegisterForm({
     classNumber: ""
   });
   const [loading, setLoading] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState(null);
   const setField = (k, v) => setF(p => ({
     ...p,
     [k]: v
@@ -608,9 +616,9 @@ function RegisterForm({
     setLoading(true);
     try {
       const u = await AuthService.register(f);
-      U.toast("สมัครสมาชิกสำเร็จ! เริ่มผจญภัยกันเลย", "success");
+      setRegisteredUser(u);
+      U.toast("สมัครสมาชิกสำเร็จ! ตรวจข้อมูลในกล่องยืนยันได้เลย", "success");
       U.sfxLevelUp();
-      onSuccess(u);
     } catch (e) {
       U.toast(e.message, "error");
       U.sfxWrong();
@@ -618,6 +626,33 @@ function RegisterForm({
       setLoading(false);
     }
   };
+  if (registeredUser) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "space-y-4 text-center"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-5xl"
+    }, "\u2713"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+      className: "text-2xl font-black text-gray-800"
+    }, "\u0E2A\u0E21\u0E31\u0E04\u0E23\u0E2A\u0E21\u0E32\u0E0A\u0E34\u0E01\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08"), /*#__PURE__*/React.createElement("p", {
+      className: "mt-1 text-sm text-gray-600"
+    }, "\u0E23\u0E30\u0E1A\u0E1A\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E19\u0E31\u0E01\u0E40\u0E23\u0E35\u0E22\u0E19\u0E40\u0E23\u0E35\u0E22\u0E1A\u0E23\u0E49\u0E2D\u0E22\u0E41\u0E25\u0E49\u0E27")), /*#__PURE__*/React.createElement("div", {
+      className: "rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-left text-sm"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "font-bold text-emerald-800"
+    }, registeredUser.fullname), /*#__PURE__*/React.createElement("div", {
+      className: "mt-1 text-gray-700"
+    }, "\u0E23\u0E2B\u0E31\u0E2A ", registeredUser.studentId, " \u2022 ", registeredUser.classroom, " \u2022 \u0E40\u0E25\u0E02\u0E17\u0E35\u0E48 ", registeredUser.classNumber || "-"), /*#__PURE__*/React.createElement("div", {
+      className: "mt-1 text-gray-700"
+    }, registeredUser.email)), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: () => onSuccess(registeredUser),
+      className: "jade-btn mobile-btn w-full rounded-xl py-3 font-bold text-lg"
+    }, "\u0E40\u0E23\u0E34\u0E48\u0E21\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19"), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      onClick: () => onSwitch("login"),
+      className: "w-full text-center text-rose-600 hover:underline text-sm"
+    }, "\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E2B\u0E19\u0E49\u0E32\u0E40\u0E02\u0E49\u0E32\u0E2A\u0E39\u0E48\u0E23\u0E30\u0E1A\u0E1A"));
+  }
   return /*#__PURE__*/React.createElement("form", {
     onSubmit: submit,
     className: "space-y-3"
