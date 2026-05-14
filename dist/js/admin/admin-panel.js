@@ -1186,6 +1186,7 @@ function AdminReports() {
 function AdminSeason() {
   const game = getGameSettings();
   const [s, setS] = useStateA(Progress.getSeason());
+  const [resettingInitial, setResettingInitial] = useStateA(false);
   const reset = () => {
     if (!confirm("รีเซ็ตซีซันใหม่? คะแนนเก่าจะถูกเก็บแต่เริ่มซีซันใหม่")) return;
     const ns = {
@@ -1197,7 +1198,26 @@ function AdminSeason() {
     setS(ns);
     U.toast("เริ่มซีซันใหม่ #" + ns.number, "success");
   };
+  const resetToInitialSeason = async () => {
+    const ok = confirm("รีเซ็ตการแข่งขันกลับเป็นซีซั่น 1 รอบ 0 และล้างคะแนนสอบ/อันดับ/รางวัลการแข่งขันทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้");
+    if (!ok) return;
+    setResettingInitial(true);
+    try {
+      const result = await Progress.resetCompetitionSeason({
+        clearScores: true,
+        clearRewards: true
+      });
+      setS(result.season);
+      U.toast("รีเซ็ตการแข่งขันกลับซีซั่นแรกเรียบร้อย", "success");
+    } catch (error) {
+      U.toast(`รีเซ็ตไม่สำเร็จ: ${error.message}`, "error");
+    } finally {
+      setResettingInitial(false);
+    }
+  };
   return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-white rounded-2xl p-6 border"
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-center"
@@ -1219,7 +1239,20 @@ function AdminSeason() {
   })), /*#__PURE__*/React.createElement("button", {
     onClick: reset,
     className: "mt-6 px-6 py-3 bg-rose-600 text-white rounded-lg font-bold"
-  }, "\uD83D\uDD04 \u0E1B\u0E34\u0E14\u0E0B\u0E35\u0E0B\u0E31\u0E19\u0E41\u0E25\u0E30\u0E40\u0E23\u0E34\u0E48\u0E21\u0E0B\u0E35\u0E0B\u0E31\u0E19\u0E43\u0E2B\u0E21\u0E48")));
+  }, "\uD83D\uDD04 \u0E1B\u0E34\u0E14\u0E0B\u0E35\u0E0B\u0E31\u0E19\u0E41\u0E25\u0E30\u0E40\u0E23\u0E34\u0E48\u0E21\u0E0B\u0E35\u0E0B\u0E31\u0E19\u0E43\u0E2B\u0E21\u0E48"))), /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl border border-rose-200 bg-rose-50 p-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-lg font-black text-rose-800"
+  }, "\u0E23\u0E35\u0E40\u0E0B\u0E47\u0E15\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19\u0E01\u0E25\u0E31\u0E1A\u0E04\u0E48\u0E32\u0E40\u0E23\u0E34\u0E48\u0E21\u0E15\u0E49\u0E19"), /*#__PURE__*/React.createElement("div", {
+    className: "mt-1 text-sm text-rose-700"
+  }, "\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E0B\u0E35\u0E0B\u0E31\u0E48\u0E19 1 \u0E23\u0E2D\u0E1A 0 \u0E1E\u0E23\u0E49\u0E2D\u0E21\u0E25\u0E49\u0E32\u0E07\u0E04\u0E30\u0E41\u0E19\u0E19\u0E2A\u0E2D\u0E1A \u0E01\u0E23\u0E30\u0E14\u0E32\u0E19\u0E2D\u0E31\u0E19\u0E14\u0E31\u0E1A \u0E41\u0E25\u0E30\u0E23\u0E32\u0E22\u0E01\u0E32\u0E23\u0E23\u0E32\u0E07\u0E27\u0E31\u0E25\u0E01\u0E32\u0E23\u0E41\u0E02\u0E48\u0E07\u0E02\u0E31\u0E19\u0E17\u0E35\u0E48\u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01\u0E44\u0E27\u0E49")), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: resetToInitialSeason,
+    disabled: resettingInitial,
+    className: "rounded-xl bg-rose-700 px-5 py-3 font-bold text-white shadow disabled:opacity-50"
+  }, resettingInitial ? "กำลังรีเซ็ต..." : "รีเซ็ตเป็นซีซั่นแรก"))));
 }
 
 // ───────── MAIN ─────────

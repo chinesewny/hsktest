@@ -416,6 +416,46 @@
     clearAggregateCaches();
   }
 
+  async function deleteRemoteCollection(collectionName) {
+    if (!window.fbDB) return 0;
+    const snap = await window.fbDB.collection(collectionName).get();
+    if (!snap.docs.length) return 0;
+    let deleted = 0;
+    for (let i = 0; i < snap.docs.length; i += 400) {
+      const batch = window.fbDB.batch();
+      snap.docs.slice(i, i + 400).forEach((doc) => {
+        batch.delete(doc.ref);
+        deleted += 1;
+      });
+      await batch.commit();
+    }
+    return deleted;
+  }
+
+  async function resetCompetitionSeason({ clearScores = true, clearRewards = true } = {}) {
+    const season = getDefaultSeason();
+    U.ls.set(KEYS.season, season);
+    if (clearScores) U.ls.set(KEYS.tests, []);
+    if (clearRewards) U.ls.set(KEYS.rewards, []);
+    clearAggregateCaches();
+
+    const result = { season, deleted: { tests: 0, rewards: 0, rankings: 0 } };
+    try {
+      if (clearScores) {
+        result.deleted.tests = await deleteRemoteCollection(REMOTE.tests);
+        result.deleted.rankings = await deleteRemoteCollection(REMOTE.rankings);
+      }
+      if (clearRewards) {
+        result.deleted.rewards = await deleteRemoteCollection(REMOTE.rewards);
+      }
+      await persistSeason(season);
+    } catch (error) {
+      console.warn("[progress] resetCompetitionSeason remote fallback", error.message);
+      persistSeason(season).catch(() => {});
+    }
+    return result;
+  }
+
   // ───────── Adaptive learning engine ─────────
   // หลักการ:
   // 1. คำนวณ mastery ของแต่ละ HSK level จากผลแบบฝึกหลังเรียนล่าสุด (rolling window)
@@ -1095,6 +1135,7 @@
     fetchStudentSeasonStats,
     fetchAllTestScores,
     fetchAllDailyReviews,
+    resetCompetitionSeason,
     getSeason,
     claimReward,
     myRewards,

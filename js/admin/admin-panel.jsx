@@ -862,14 +862,30 @@ function AdminReports() {
 function AdminSeason() {
   const game = getGameSettings();
   const [s, setS] = useStateA(Progress.getSeason());
+  const [resettingInitial, setResettingInitial] = useStateA(false);
   const reset = () => {
     if (!confirm("รีเซ็ตซีซันใหม่? คะแนนเก่าจะถูกเก็บแต่เริ่มซีซันใหม่")) return;
     const ns = { number: s.number+1, startedAt: U.toISO(), roundsCompleted: 0 };
     U.ls.set("hsk_current_season", ns); setS(ns);
     U.toast("เริ่มซีซันใหม่ #" + ns.number, "success");
   };
+  const resetToInitialSeason = async () => {
+    const ok = confirm("รีเซ็ตการแข่งขันกลับเป็นซีซั่น 1 รอบ 0 และล้างคะแนนสอบ/อันดับ/รางวัลการแข่งขันทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้");
+    if (!ok) return;
+    setResettingInitial(true);
+    try {
+      const result = await Progress.resetCompetitionSeason({ clearScores: true, clearRewards: true });
+      setS(result.season);
+      U.toast("รีเซ็ตการแข่งขันกลับซีซั่นแรกเรียบร้อย", "success");
+    } catch (error) {
+      U.toast(`รีเซ็ตไม่สำเร็จ: ${error.message}`, "error");
+    } finally {
+      setResettingInitial(false);
+    }
+  };
   return (
-    <div className="bg-white rounded-2xl p-6 border">
+    <div className="space-y-4">
+      <div className="bg-white rounded-2xl p-6 border">
       <div className="text-center">
         <div className="text-6xl mb-2">🏆</div>
         <div className="text-3xl font-bold">ซีซันที่ {s.number}</div>
@@ -882,6 +898,26 @@ function AdminSeason() {
         <button onClick={reset} className="mt-6 px-6 py-3 bg-rose-600 text-white rounded-lg font-bold">
           🔄 ปิดซีซันและเริ่มซีซันใหม่
         </button>
+      </div>
+      </div>
+
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h3 className="text-lg font-black text-rose-800">รีเซ็ตการแข่งขันกลับค่าเริ่มต้น</h3>
+            <div className="mt-1 text-sm text-rose-700">
+              กลับไปซีซั่น 1 รอบ 0 พร้อมล้างคะแนนสอบ กระดานอันดับ และรายการรางวัลการแข่งขันที่บันทึกไว้
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={resetToInitialSeason}
+            disabled={resettingInitial}
+            className="rounded-xl bg-rose-700 px-5 py-3 font-bold text-white shadow disabled:opacity-50"
+          >
+            {resettingInitial ? "กำลังรีเซ็ต..." : "รีเซ็ตเป็นซีซั่นแรก"}
+          </button>
+        </div>
       </div>
     </div>
   );
