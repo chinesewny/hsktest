@@ -886,23 +886,9 @@ window.DailyTraining = function DailyTraining({
     }
   })), /*#__PURE__*/React.createElement("div", {
     onClick: () => setFlipped(!flipped),
-    className: "relative cursor-pointer mx-auto",
-    style: {
-      maxWidth: "500px",
-      height: "380px",
-      perspective: "1000px"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 transition-transform duration-500",
-    style: {
-      transformStyle: "preserve-3d",
-      transform: flipped ? "rotateY(180deg)" : "none"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-br from-rose-500 via-pink-500 to-orange-500 rounded-3xl shadow-2xl flex flex-col items-center justify-center p-8",
-    style: {
-      backfaceVisibility: "hidden"
-    }
+    className: "relative mx-auto h-[380px] max-w-[500px] cursor-pointer overflow-hidden rounded-3xl shadow-2xl transition duration-300 hover:-translate-y-1"
+  }, !flipped ? /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-rose-500 via-pink-500 to-orange-500 p-8 text-white"
   }, /*#__PURE__*/React.createElement("div", {
     className: "absolute inset-0 overflow-hidden rounded-3xl"
   }, /*#__PURE__*/React.createElement("div", {
@@ -912,7 +898,7 @@ window.DailyTraining = function DailyTraining({
   }), /*#__PURE__*/React.createElement("div", {
     className: "absolute bottom-6 left-1/2 h-24 w-52 -translate-x-1/2 rounded-[28px] bg-black/8 blur-sm"
   })), /*#__PURE__*/React.createElement("div", {
-    className: `relative z-10 ${hanziFitClass(w.hanzi, "hero")} font-bold mb-4 whitespace-nowrap leading-none drop-shadow-[0_4px_12px_rgba(60,24,38,0.18)]`,
+    className: `relative z-10 ${hanziFitClass(w.hanzi, "hero")} mb-6 font-bold leading-none drop-shadow-[0_4px_12px_rgba(60,24,38,0.18)]`,
     style: {
       fontFamily: "'Noto Sans SC',serif"
     }
@@ -921,26 +907,33 @@ window.DailyTraining = function DailyTraining({
       e.stopPropagation();
       U.speak(w.hanzi);
     },
-    className: "relative z-10 px-6 py-3 bg-white/20 backdrop-blur rounded-full font-bold hover:bg-white/30"
+    className: "relative z-10 rounded-full bg-white/20 px-6 py-3 font-bold backdrop-blur hover:bg-white/30"
   }, "\uD83D\uDD0A \u0E1F\u0E31\u0E07\u0E40\u0E2A\u0E35\u0E22\u0E07"), /*#__PURE__*/React.createElement("div", {
     className: "absolute bottom-4 z-10 text-sm opacity-80"
-  }, "\u0E41\u0E15\u0E30\u0E01\u0E32\u0E23\u0E4C\u0E14\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E14\u0E39\u0E04\u0E27\u0E32\u0E21\u0E2B\u0E21\u0E32\u0E22")), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 rounded-3xl shadow-2xl flex flex-col items-center justify-center p-8",
-    style: {
-      backfaceVisibility: "hidden",
-      transform: "rotateY(180deg)"
-    }
+  }, "\u0E41\u0E15\u0E30\u0E01\u0E32\u0E23\u0E4C\u0E14\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E14\u0E39\u0E04\u0E27\u0E32\u0E21\u0E2B\u0E21\u0E32\u0E22")) : /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-8 text-center text-white"
   }, /*#__PURE__*/React.createElement("div", {
-    className: `${hanziFitClass(w.hanzi, "card")} font-bold mb-2 whitespace-nowrap leading-none`
+    className: "absolute inset-0 overflow-hidden rounded-3xl"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute left-6 top-6 h-24 w-24 rounded-full bg-white/8 blur-sm"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-8 right-8 h-32 w-32 rounded-full bg-cyan-200/10 blur-md"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "absolute right-4 top-4 rounded-xl bg-white/14 px-3 py-1 text-xs font-semibold"
+  }, "HSK ", w.level), /*#__PURE__*/React.createElement("div", {
+    className: `relative z-10 ${hanziFitClass(w.hanzi, "hero")} max-w-full font-bold leading-none`,
+    style: {
+      fontFamily: "'Noto Sans SC',serif"
+    }
   }, w.hanzi), /*#__PURE__*/React.createElement("div", {
-    className: "text-2xl text-yellow-300 mb-3"
+    className: "relative z-10 mt-4 text-2xl font-bold text-yellow-200"
   }, w.pinyin), /*#__PURE__*/React.createElement("div", {
-    className: "text-2xl font-bold mb-2"
-  }, U.getPrimaryMeaning(w.meaning)), /*#__PURE__*/React.createElement("div", {
-    className: "text-sm bg-white/20 px-3 py-1 rounded-full"
+    className: "relative z-10 mt-5 max-w-[90%] rounded-2xl bg-white/16 px-5 py-3 text-2xl font-bold leading-snug"
+  }, U.getPrimaryMeaning(w.meaning)), w.pos && /*#__PURE__*/React.createElement("div", {
+    className: "relative z-10 mt-3 rounded-full bg-white/18 px-4 py-2 text-sm font-semibold"
   }, w.pos), /*#__PURE__*/React.createElement("div", {
-    className: "absolute top-3 right-3 text-xs bg-white/10 px-2 py-1 rounded"
-  }, "HSK ", w.level)))), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-4 z-10 text-xs text-white/72"
+  }, "\u0E41\u0E15\u0E30\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E01\u0E25\u0E31\u0E1A\u0E44\u0E1B\u0E14\u0E39\u0E04\u0E33\u0E28\u0E31\u0E1E\u0E17\u0E4C"))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mt-8"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: prev,
